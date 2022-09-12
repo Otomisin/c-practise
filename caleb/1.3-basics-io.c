@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-innt main ()
+int main (void)
 {
-	
+	return()
 }
