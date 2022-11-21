@@ -2,14 +2,23 @@
      "tasks": [
           {
                "type": "cppbuild",
+<<<<<<< HEAD
                "label": "C/C++: gcc.exe build active file",
                "command": "C:\\Users\\Orenaike\\mingw64\\bin\\gcc.exe",
+=======
+               "label": "C/C++: gcc-11 build active file",
+               "command": "/usr/bin/gcc-11",
+>>>>>>> 8ba9a294bf0f583acb123406a66caea3c9daa9e9
                "args": [
                     "-fdiagnostics-color=always",
                     "-g",
                     "${file}",
                     "-o",
+<<<<<<< HEAD
                     "${fileDirname}\\${fileBasenameNoExtension}.exe"
+=======
+                    "${fileDirname}/${fileBasenameNoExtension}"
+>>>>>>> 8ba9a294bf0f583acb123406a66caea3c9daa9e9
                ],
                "options": {
                     "cwd": "${fileDirname}"
