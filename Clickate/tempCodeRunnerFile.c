@@ -1,17 +1,26 @@
 /*
-User input
+Arithmetic Operators
 */
 
 #include <stdio.h>
+#include <string.h>
 
-int main(){
+int main (){
+     //Arithmetic operators
 
-    int age;
+     // + (addition)
+     // - (subtraction)
+     // * (Multiplications)
+     // / (Division)
+     // % (modulus)
+     // ++ (increment)
+     // -- (decrement)
 
-    printf ("How old are you: ");
-    scanf  ("%d", &age);
+     int x = 5;
+     int y =2;
 
-    printf("You are %d years old", age );
+     int z = x + y
 
-    return 0;
+     printf("The result is %d," z);
+     return 0
 }
