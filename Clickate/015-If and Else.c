@@ -16,5 +16,18 @@ int main  (){
      if (age >= 18){
           printf("Congratulatioins you can register");
      }
+
+     else if (age >=0 && age < 18){
+          printf("You are too young to bet");
+     }
+
+     else if (age < 0){
+     printf("Kindly add a more reliable age");
+     }     
+
+     else {
+          printf("Sorry,You can't register");
+     }  
+
      return 0;
 }
