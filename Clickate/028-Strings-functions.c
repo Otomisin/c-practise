@@ -27,7 +27,7 @@ int main (){
 
      // int result = strlen(string1); //This returns the length of the string
      int result = strcmp (string1, string2); //string compare all characters
-     int result = strncmp(string1, string2, 1) // This compares n chracter
+     int result = strncmp(string1, string2, 1); // This compares n chracter
 
      printf("%d", result);      
 
