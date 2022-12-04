@@ -1,77 +1,31 @@
 #!/usr/bin/python3
 
 """
-Python 3's f-Strings ===================
-List comprehension offers a shorter syntax when you want to create a new list based on the values of an existing list.
+The String .format() Method: Arguments
 
 
-#https://realpython.com/python-f-strings/#f-strings-a-new-and-improved-way-to-format-strings-in-python
+https://realpython.com/python-formatted-output/#the-python-string-format-method
 
 """
 #=============================================================================================================
-
-"""
-How to Use %-formatting
-The disadvantages of this method is 
-- It can be verbose and lead to errors 
--
-"""
-
-name = "Eric"
-age = 34
-score = 3.5
-print("Hello, %s." %name)
-print("Hello, %s. You are, %s." %(name, age))
-print("Hello, %s. You are %s, and your score is %s" %(name,age, score))
-
-"""
-How To Use str.format()
-"""
-name = "Eric"
-age = 34
-score = 3.5
-print("Hello, {}." .format(name))
-print("Hello, {}. You are, {}." .format(name, age))
-print("Hello, {}. You are {}, and your score is {}" .format(name,age, score))
-
-person = {'name': 'Eric', 'age': 73, 'score': 3.65}
-print("Hello {name}, you are {age} and your score is {score}" .format(name = person['name'], age=person['age'], score= person['score']))
+print('%d %s cost $%.2f' % (6, 'bananas', 1.74))
 
 
 """
-f-Strings: A New and Improved Way to Format Strings in Python
+USING POSITIONAL PARAMETERS
+The replacement fields are {0}, {1},{2} and {3}, which contain numbers that correspond to the zero-based positional arguments 6, 'bananas', 1.74 and 2022. 
+"""
+print ("{0} {1} cost ${2}" .format (6, 'bananas', 1.74))
+print ("{0} {1} cost ${2} in {3}" .format (6, 'bananas', 1.74, 2022))
+
+"""
+USING KEYWORD ARGUMENT
+-Replacement fields don’t have to appear in the template in numerical order. They can be specified in any order, and they can appear more than once:
 """
 
-# Python3 program introducing f-string
+print ("{quantity} {item} cost ${price} in {year}" .format(quantity=6, item ='bananas', price = 50, year = 2022))
 
-name = "Tosin"
-age = 25
-print(f"My name is {name}, and I am {age} years old")
+#The position does not matter when you use the replacement fields and 
+print('{2}.{1}.{0}/{0}{0}.{1}{1}.{2}{2}'.format('foo', 'bar', 'baz'))
 
-print (f"{2*4}")
-
-
-height = 4
-leght = 5
-
-print(f"the total is {height*leght/height}")
-
-
-#Loop over f strings
-
-people = [{
-          'name':'Tosin',
-          'age': 32,
-          'gender': 'male',
-          'score':34.3},
-     {
-          'name':'Bola',
-          'age': 34,
-          'gender': 'female',
-          'score': 55.7}
-]
-
-for person in people:
-     print(f"{person.get('name')} is {person.get('age')} years old and your score is {person.get('score')}")
-
-print(f"{'she' if person.get('gender')== 'female' else 'He'} went to the store") #Conditioin in Python
+#You can also omit the 
