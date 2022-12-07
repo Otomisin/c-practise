@@ -68,3 +68,22 @@ print("Dictionary", d)
 # Removing key-value pair
 del d[10]
 print("Dictionary", d)
+
+a, b = 0, 1
+while a < 10:
+    print(a)
+    a, b = b, a+b
+
+a, b = 0, 1
+while a < 1000:
+    print(a, end='')
+    a, b = b, a+b
+
+# Measure some strings:
+words = ['cat', 'window', 'defenestrate', 'woman']
+for w in words:
+    print(w, len(w), end = '')
+
+names = ['Bola', 'Boluwatife', 'Anu', 'oluwaseunfunmi']
+for x in names:
+     print(x, len(x), end = " $ ")

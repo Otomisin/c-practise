@@ -7,16 +7,19 @@ https://www.w3schools.com/python/python_strings.asp
 A module is like a code library. It's a file containing a set of function you want to include in your application. To create a module just save your code in a fiel extension .py
 """
 
+"""
+CREATE A MODULE
 ##Create a Module. 
 #To create a module simply create a file with .py in the same folder
-
-"""
-IMPORT A MODULE
 """
 def greeting (name):
      print ("Hello," + name)
 
 
+
+"""
+IMPORT A MODULE
+"""
 ##Use the module here
 import mymodule
 mymodule.greeting ("Jonathan")

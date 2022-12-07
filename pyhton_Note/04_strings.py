@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 """
-This is a 
+This is a
 https://www.w3schools.com/python/python_strings.asp
 https://www.youtube.com/watch?v=OICqSuUvSUc&ab_channel=datagy
 
@@ -34,7 +34,7 @@ a = "Hello,world"
 print(len(a))
 
 """
-Check if a text is in a phrase  
+Check if a text is in a phrase
 """
 #To check use "in" and to check if not use "not in"
 txt = "This is a text"
