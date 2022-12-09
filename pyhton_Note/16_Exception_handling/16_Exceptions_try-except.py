@@ -6,4 +6,4 @@ while True:
         print("You need to enter a number")
     except:
         print("An unknown error occured")
-print("Thank you for entering a number")
+print("Thank you for entering a number 2")
