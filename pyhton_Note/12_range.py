@@ -15,10 +15,23 @@ stop: The value of the stop parameter
 
 step: The value of the step parameter (or 1 if the parameter was not supplied)
 
+OUTLINE
+- How to 
+
 https://docs.python.org/3/library/stdtypes.html#range
+https://docs.python.org/3/tutorial/controlflow.html#the-range-function
 """
 #=============================================================================================================
 
 list(range(3, 6))
 
 
+num = range(1,10, 2)
+print(num)
+
+"""
+"""
+list(range(5, 10))
+
+
+range(2)
