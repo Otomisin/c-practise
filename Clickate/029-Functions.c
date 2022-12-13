@@ -9,7 +9,8 @@
 #include <math.h> //Function for mathematical operations
 
 // Invoke a function
-void greeting (){
+void greeting (){ 
+   //void is used to invoke a functioin in C 
      printf("This is a function test\n");     
      printf("This is a function test\n");
 

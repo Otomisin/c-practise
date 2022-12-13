@@ -37,7 +37,7 @@ if (x < 40 || alpha =='B'|| sunny == true){ // True can also be set to 1 and use
 // Using not; ! ||
 if (!sunny){ // True can also be set to 1 and used alone as "sunny"
      printf("It is cloudy");
-} else {
+}    else {
      printf("It is sunny");
 } 
      return 0;

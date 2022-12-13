@@ -17,7 +17,7 @@ printf("You are %d Years old", age);
 
 int main (){
      int age = 25;
-     int *ptr_age = &age;  //this stores the address of age
+     int *ptr_age = &age;  //this stores the address of age in ptr_age
 
      printf ("LEFT SIDE is the ADDRESS %p\n", &age);
      printf ("RIGHT SIDE is value %p\n", &age);
@@ -27,8 +27,8 @@ int main (){
      printf("Value at the memory address of ptr_age is %d\n", *ptr_age); //derefrencing
      
      //checking the size of the variable age and ptr_age
-     printf("The size of the variable age %d\n", sizeof(age));
-     printf ("The size of the pointer ptr_age is %d \n", sizeof(ptr_age));
+   //   printf("The size of the variable age %d\n", sizeof(age));
+   //   printf ("The size of the pointer ptr_age is %d \n", sizeof(ptr_age));
 
      printage(30); //Call the function printage function
 
