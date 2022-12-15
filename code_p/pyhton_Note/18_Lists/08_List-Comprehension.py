@@ -15,7 +15,7 @@ https://www.w3schools.com/python/python_lists_comprehension.asp
 """
 CAPITALISE LIST
 """
-#Print the names in the list in lower
+# Print the names in the list in lower
 fruits = ["apple", "banana", "cherry", "kiwi", "mango"]
 lower_fruits = []
 
@@ -24,7 +24,7 @@ for name in fruits:
 
 print(lower_fruits)
 
-#Print in capitalize
+# Print in capitalize
 fruits = ["apple", "banana", "cherry", "kiwi", "mango"]
 lower_fruits = []
 
