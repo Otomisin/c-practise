@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+# !/usr/bin/python3
 
 print("Welcome to the rollercoater!")
 height = int(input("What is your height in cm? "))
