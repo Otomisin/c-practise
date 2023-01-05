@@ -5,3 +5,4 @@ User.id = 98
 u = User()
 u.id = 89
 print(User.id)
+gg
