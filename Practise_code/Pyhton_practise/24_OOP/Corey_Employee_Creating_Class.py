@@ -25,8 +25,8 @@ emp_3 = Employee('tosin','orenaike', 120000)
 
 # Calling obects
 
-emp_1.fullname()
-Employee.fullname(emp_1)
-# print(emp_1.email)
-# print(f"Tosin since your first and last name is {emp_3.first} {emp_3.last}, then your email is {emp_3.email}")
-# print(emp_1.fullname())
+print (emp_1.fullname())
+print(Employee.fullname(emp_1))
+
+print (f"Tosin since your first and last name is {emp_3.first} {emp_3.last}, then your email is {emp_3.email}")
+print (emp_1.fullname())
