@@ -1,17 +1,17 @@
-class Fruit:
-    def __init__(self, name, color):
-        self.name = name
-        self.color = color
+class Person:
 
-    def show(self):
-        print("Fruit is", self.name, "and Color is", self.color)
+    def __init__(self, person_name, person_age):
+        self.name = person_name
+        self.age = person_age
 
-# creating object of the class
-Fruits = Fruit("Apple", "red")
+    def __str__(self):
+        return f"{self.name} {self.age}"
 
-# Modifying Object Properties
-Fruits.name = "strawberry"
+    def __repr__(self):
+        return f"{self.name} {self.age}"
 
-# calling the instance method using the object obj
-Fruits.show()
-# Output Fruit is strawberry and Color is red
+
+p = Person('Pankaj', 34)
+
+print(p.__str__())
+print(p.__repr__())
