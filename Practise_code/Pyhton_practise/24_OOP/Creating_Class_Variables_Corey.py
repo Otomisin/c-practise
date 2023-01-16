@@ -25,7 +25,7 @@ class Employee:
      def apply_raise(self):
           self.pay = int(self.pay * self.raise_amount)
 
-     @classmethod
+     @classmethod # Decorator
      def set_raise_amt (cls, amount):
           cls.raise_amount = amount
 
@@ -49,6 +49,3 @@ print (emp_1.fullname())
 print(Employee.num_of_emps)
 
 print(emp_1.__dict__)
-
-
-
