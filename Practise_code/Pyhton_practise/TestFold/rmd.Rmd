@@ -1,0 +1,57 @@
+---
+title: "R Mardown Tutorial"
+author: "Tosin"
+date: "2023-02-04"
+output: 
+  html_document: 
+    theme: cosmo
+    highlight: zenburn
+    toc: yes
+    fig_caption: yes
+    number_sections: yes
+---
+
+Hello world
+
+# This is heading one
+## Heading two
+### Heading three
+#### Heading four
+##### Heading five
+
+## *Make italic*
+## **Make bold**
+## ***Make bold***
+
+## List Items
+1. One
+2. Two
+3. Three
+
+## Bulled List
+* Bullet 1
+* Bullet 2
+
+## Add links to text/documents
+*Here is a link to a website [the link](https://www.youtube.com/watch?v=K418swtFnik&t=133s)*
+
+```{r}
+# Hello world
+library(dplyr)
+myd <- cars
+head(myd)
+```
+
+## Next line of code
+Using r to plot `plots()`
+
+```{r}
+
+plot(myd$speed ~ myd$dist)
+
+```
+
+### Session info:
+```{r}
+sessionInfo()
+```
