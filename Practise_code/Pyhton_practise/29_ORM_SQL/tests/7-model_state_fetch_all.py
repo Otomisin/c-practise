@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 
 
 if __name__ == "__main__":
-    engine = create_engine("mysql+mysqldb:// otomisinsql:password3234@localhost:3306/hbtn_0e_6_usa")
+    engine = create_engine("mysql+mysqldb:// otomisinsql:passwordTpass@localhost:3306/hbtn_0e_6_usa")
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
