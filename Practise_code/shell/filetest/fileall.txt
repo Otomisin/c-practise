@@ -1,0 +1,70 @@
+01_Intro.sh*
+02_Comments.sh*
+03_user_input.sh*
+1-hello*
+arrary.sh*
+configuration_mgt/
+file.txt
+for_loop copy.sh*
+for_loop.sh*
+PID.sh*
+Project_ 0x01. Shell, permissions _ ALX Africa Intranet.pdf
+shell_Note.ipynb
+shelTEST.sh
+shelTEST2.sh
+tempCodeRunnerFile.sh
+users_management/
+variable.sh*
+01_Intro.sh*
+02_Comments.sh*
+03_user_input.sh*
+1-hello*
+arrary.sh*
+configuration_mgt/
+file.pdf
+file.txt
+for_loop copy.sh*
+for_loop.sh*
+PID.sh*
+Project_ 0x01. Shell, permissions _ ALX Africa Intranet.pdf
+shell_Note.ipynb
+shelTEST.sh
+shelTEST2.sh
+tempCodeRunnerFile.sh
+users_management/
+variable.sh*
+01_Intro.sh*
+02_Comments.sh*
+03_user_input.sh*
+1-hello*
+arrary.sh*
+configuration_mgt/
+file.txt
+for_loop copy.sh*
+for_loop.sh*
+PID.sh*
+Project_ 0x01. Shell, permissions _ ALX Africa Intranet.pdf
+shell_Note.ipynb
+shelTEST.sh
+shelTEST2.sh
+tempCodeRunnerFile.sh
+users_management/
+variable.sh*
+01_Intro.sh*
+02_Comments.sh*
+03_user_input.sh*
+1-hello*
+arrary.sh*
+configuration_mgt/
+file.pdf
+file.txt
+for_loop copy.sh*
+for_loop.sh*
+PID.sh*
+Project_ 0x01. Shell, permissions _ ALX Africa Intranet.pdf
+shell_Note.ipynb
+shelTEST.sh
+shelTEST2.sh
+tempCodeRunnerFile.sh
+users_management/
+variable.sh*
