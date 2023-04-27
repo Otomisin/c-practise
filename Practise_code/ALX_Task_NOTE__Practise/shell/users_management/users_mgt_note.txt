@@ -1,0 +1,32 @@
+Check for users list
+ls -l /home
+
+create a user
+sudo useradd name
+
+Check for all users
+>>> cat /etc/passed
+
+check for specific user
+>>> cat /etc/passwd | grep sysuser
+
+count users
+>>> cat /etc/passed | wc -l
+
+#Remove user
+>>> sudo userdel name
+
+CREATE A USER wih HOME Directory
+>>> sudo useradd -m name
+
+Remove user and home Directory
+>>> sudo userdel -r foxmul
+
+SETTING PASSWORDS 
+- Setting passwords for users 
+>>> sudo passwd ibukun
+(OTOMISIN00)
+
+CREATE A SYSTEM USER
+sudo useradd -r sysuser
+new line
