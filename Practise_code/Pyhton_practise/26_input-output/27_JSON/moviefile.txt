@@ -1,1 +1,0 @@
-{"title": "Minority Report", "director": "Steven Spielberg", "actors": ["Tom Crusise", "Colin Farrell"], "remarks": "Good", "budget": 10231111, "cinematographer": "Janusz Kamiński"}
