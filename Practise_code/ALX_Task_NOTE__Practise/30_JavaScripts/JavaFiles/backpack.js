@@ -1,6 +1,6 @@
 // backpack.js
 
-class Backpack {
+export default class Backpack {
   constructor(
     // Defines parameters:
     name,
@@ -32,4 +32,4 @@ class Backpack {
   }
 }
 
-export default Backpack;
+// export default Backpack;
