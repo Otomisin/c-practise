@@ -1,0 +1,94 @@
+#head {
+  text-align: left;
+  color: rgb(248, 246, 246);
+  display: grid;
+  border-style: dashed;
+  /* border-width: 7px; */
+  border-width: 5px 1px; /* 5px top and bottom, 20px on the sides */
+  border-color: blue;
+  border-color: red green blue yellow;
+  border-radius: 5px;
+}
+
+#para1 {
+  text-align: center;
+  color: rgb(228, 221, 221);
+  display: contents;
+}
+
+/* Element Selector */
+p {
+  color: blue;
+}
+
+/* Class Selector */
+.button {
+  background-color: red;
+  color: white;
+  border-style: solid;
+  border-radius: 2px;
+}
+
+/* ID Selector */
+#header {
+  font-size: 24px;
+  font-weight: bold;
+  font-style: italic;
+}
+
+/* Descendant Selector */
+article p {
+  font-style: italic;
+  color: black;
+}
+
+/* Child Selector */
+ul > li {
+  list-style-type: circle;
+}
+
+/* Attribute Selector */
+input[type="text"] {
+  border: 1px solid gray;
+}
+
+/* Pseudo-class Selector */
+a:hover {
+  text-decoration: underline;
+}
+
+/* Pseudo-element Selector */
+p::first-line {
+  font-weight: bold;
+}
+
+/* Grouping Selector */
+h1, h2, h3 {
+  color: darkblue;
+}
+
+/* Universal Selector */
+* {
+  margin: 0;
+  padding: 1;
+}
+
+// POSITION /////////////////////////////
+
+h2 {
+  font-size: large;
+}
+
+/* 
+BACKGROUND  */
+body {
+  color: grey;
+  background-image: url("bgdesert.jpg");
+  /* background-image: url("bgdesert.webp"); */
+  background-repeat: no-repeat; // Or repeat/repeat-y/repeat-x to reapeat the image or "no-repeat"
+  background-position: right top;
+  /* background-color: blanchedalmond; */
+  background-attachment: scroll;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+  
+}
