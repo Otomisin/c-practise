@@ -11,5 +11,3 @@ name = input('What is your name? ')
 #Print out hello followed by the name they entered
 # print("Hello" + name)
 print('Hello', name)
-
-
