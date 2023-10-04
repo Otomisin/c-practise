@@ -121,3 +121,24 @@ function init(){
   })
 
 }
+
+// Chart.js
+const ctx = document.getElementById('chart').getContext('2d');
+const data = {
+    labels: ['Roads', 'Floods', 'Insecurity', 'Crime', 'Drought '],
+    datasets: [{
+        data: [12, 19, 3, 17, 28],
+        backgroundColor: [
+            '#007BFF',
+            '#FFC107',
+            '#28A745',
+            '#DC3545',
+            '#17A2B8'
+        ]
+    }]
+};
+
+const chart = new Chart(ctx, {
+    type: 'pie',
+    data: data
+});
