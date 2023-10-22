@@ -1,0 +1,12 @@
+﻿iso3,country,area,dis_int,landlocked,city_en,citynum,langoff_i,lang20_1,lang9_1,colonizer1
+BDI,Burundi,27834,62.75114,1,Bujumbura,15,French;Kirundi;.,French;Kirundi,,BEL; DEU
+DJI,Djibouti,23200,57.28986,0,Djibouti,5,French;Arabic;.,Afar;Somali,Arabic;French;.;.,FRA
+ERI,Eritrea,121320,131.0087,0,Asmara,18,English;.;.,Tigrigna;Tigré;English;Arabic,Afar,GBR
+ETH,Ethiopia,1127127,399.3192,1,Addis Ababa,25,Amharic;Tigrigna;English,Amharic;Oromo,,.
+KEN,Kenya,582646,287.102,0,Nairobi,25,English;Swahili;.,English;Swahili;Gikuyu;.,Luo;Luyia;Kalenjin;Kamba,GBR
+RWA,Rwanda,26338,61.0415,1,Kigali,12,French;English;Rwanda,Rwanda;English;,French,BEL; DEU
+SDN,Sudan,2505813,595.399,0,Khartoum,25,Arabic,Arabic,,GBR; EGY
+SOM,Somalia,637657,300.3498,0,Mogadishu,25,Somali;English;Arabic,Somali,,GBR;ITA
+TZA,"Tanzania, United Rep. of ",945090,365.6541,0,Dar es Salaam,25,English;Swahili;.,Swahili,Sukuma,GBR
+TZA,"Tanzania, United Rep. of ",945090,365.6541,0,Dar es Salaam,25,English;Swahili;.,Swahili,Sukuma,GBR
+UGA,Uganda,241038,184.6616,1,Kampala,25,English;.;.,Ganda,English,GBR
