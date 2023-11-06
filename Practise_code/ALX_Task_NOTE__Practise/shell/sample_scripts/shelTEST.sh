@@ -1,6 +1,0 @@
-while true
-do 
-	echo "To infinity and beyond"
-	sleep 2
-	trap 'echo "I am invincible!!!"' SIGTERM
-done
