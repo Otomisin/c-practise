@@ -8,3 +8,173 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+```{r}
+vector_sample <- c(1:3)
+vecString <- c("boys", "girls", "man")
+
+
+# sorting a vector
+
+sort(vecString, decreasing = TRUE)
+sort(vector_sample, decreasing = TRUE)
+
+strExam <- c("apple", "banana", "cherry")
+strExam[3]
+
+length(c("apple", "banana", "cherry"))
+
+newvec <-sort(rep(strExam, 3))
+newvec
+
+vexRep <- c("a","b")
+
+rep(vexRep, 3)
+```
+```{r}
+vexSamp1 <- c(1, 4, 3, 4, 5)
+
+vexSamp1[5] <- 3
+
+vexSamp1[5]
+
+listlen <- list(1, "a", TRUE, 4.5)
+length(listlen)
+
+
+listlenv3 <- c("apple", "banana", "cherry")
+item <- "Man"
+
+if(item %in% listlenv3){
+  print("Item is in listlenv3")
+} else {
+  print("item is not in listenv3")
+}
+
+# add to a list
+fruits <- list("apple", "banana")
+fruitsv2 <- c("apple")
+
+fruits3 <-c(fruitsv2, fruits, fruits)
+print(fruits3)
+
+fruits3[[1]] <- NULL
+fruits3[[2]] <- NULL
+
+fruits3
+
+first3   <- list("apple", "banana", "cherry", "date")
+
+first3[[2]] <- NULL
+
+first3
+```
+```{r}
+
+fruits <- list("apple", "banana", "apple")
+for (item in fruits) {
+  print(fruits)
+}
+
+
+fruits <- list("apple", "banana", "apple")
+
+for (i in 1:length(fruits)) {
+  fruits[[i]] <- paste0(fruits[[i]], "_nuf")
+}
+
+print(fruits)
+
+
+
+```
+```{r}
+
+first4 <- list(c("item1", "item2"), c("item3", "item4"), c("item5", "item6"))
+
+for (i in 1:length(first4)) {
+  first4[[i]][1] <- paste(first4[[i]][1], "Add", sep="")
+}
+
+# Print the modified list
+print(first4)
+
+```
+
+
+# Youäre here
+```{r}
+
+fruitsx <- list("apple", "banana", "apple")
+
+
+for (i in fruitsx){
+  item <- substr(i, 2, 2)
+  print(item)
+}
+
+
+fruitsx <- list("apple", "banana", "apple")
+
+for (i in 1:length(fruitsx)){
+  item <- substr(i, 2, 2)
+  print(item)
+}
+
+
+```
+
+
+```{r}
+substr(fruitsx, 2, 2)
+```
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+
+# Assuming you have a data frame 'df' with columns 'A' and 'Category'
+# Generate example data (you would use your own data)
+set.seed(123) # for reproducibility
+df <- data.frame(
+  A = rnorm(400),
+  Category = factor(rep(0:3, each = 100))
+)
+
+# Create the violin plot with boxplot overlay
+ggplot(df, aes(x = Category, y = A)) +
+  geom_violin(trim = FALSE, fill = "lightgray") +
+  geom_boxplot(width = 0.1, outlier.shape = NA, fill = "white") +
+  theme_minimal() +
+  labs(y = "Category", x = "A")
+
+# Display the plot
+ggsave("violin_boxplot.png", width = 8, height = 6)
+
+```
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+
+# Assuming you have a data frame 'df' with columns 'A' and 'Category'
+# Generate example data (you would use your own data)
+set.seed(123) # for reproducibility
+df <- data.frame(
+  A = rnorm(400),
+  Category = factor(rep(0:3, each = 100))
+)
+
+# Create the violin plot with boxplot and strip plot overlay
+ggplot(df, aes(x = Category, y = A)) +
+  # geom_violin(trim = FALSE, fill = "lightgray") +
+  geom_jitter(width = 0.2, size = 1, alpha = 0.5, aes(color = Category)) +
+  geom_boxplot(width = 0.1, outlier.shape = NA, fill = "white", alpha = 0, aes(color = Category)) +
+  theme_minimal() +
+  labs(y = "Category", x = "A")
+
+# Display the plot           
+# ggsave("violin_box_strip_plot.png", width = 8, height = 6)
+
+```
+
