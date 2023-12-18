@@ -11,78 +11,44 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 matrix(c(1,2,4,5,2,3), nrow = 2, ncol = 3 )
 ```
-
-```{r}
-mat = matrix(c(1,2,4,5,2,3), nrow = 2, ncol = 3 )
-
-twotwo <- mat[, 1:2]
-
-newMat <- cbind(twotwo, c(13, 14))
-print(newMat)
-
-print(newMat[, -c(1, 2)])
-
-```
-
 ```{r}
 mat = matrix(c(1, 2, 3, 4, 5, 6), nrow=2, ncol=3)
+# mat [[2]][[1]]
+# mat[2,1]
+mat
+print(mat[,1:2])
+
 
 5 %in% mat
 
-print(mat)
-length(mat)
-dim(mat)
+mat[5] <- 10
+mat
 
-mat[5]
+arradata <- array(1:27, dim = c(2,2,3))
+arradata
+arradata[1,2,1]
 
-```
-```{r}
-today()
+7 %in% arradata
 
-ymd("2023-02-22")
-ymd("2017-01-31")
 ```
 
 ```{r}
-datetime <- ymd_hms("2016-07-08 12:34:56")
 
-year(datetime)
-#> [1] 2016
-month(datetime)
-#> [1] 7
-mday(datetime)
-#> [1] 8
 
-yday(datetime)
-#> [1] 190
-wday(datetime)
-#> [1] 6
+arradata <- array(1:27, dim = c(2,2,3))
+arradata
+
+dim(arradata)[1:3]
+
 ```
+
 ```{r}
-mat1 <- matrix(c(1,2,3,4,3,4), nrow =2, ncol =3)
-mat1v1 <- mat1[, 2:3]
-mat1v1
+# # arradata <- array(1:27, dim = c(2,2,3))
+# for (i in arradata[,c(,,1)]){
+#   print(i)
+# }
 
-mat2 <- matrix(c(7, 8), nrow = 1, ncol = 2)
-
-mat3 <- rbind(mat1v1, mat2)
-
-print(mat3)
-
-mat1[, -c(1, 2)]
-
-ara <- array(c(1,2,3,4,2,1), dim = c(2,2,3))
-
-
-seq(5,15)
-
-
-thirdElement <- list("apple", "banana", c("cherry", "grape"))
-thirdElement[[3]][[2]]
-
-
-sortval <- c("apple", "orange", "banana", "grape")
-sort(sortval)
+arradata[[1]][,,1]
 
 ```
 
