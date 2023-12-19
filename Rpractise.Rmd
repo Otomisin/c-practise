@@ -8,138 +8,60 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
 ```{r}
-matrix(c(1,2,4,5,2,3), nrow = 2, ncol = 3 )
-```
-```{r}
-mat = matrix(c(1, 2, 3, 4, 5, 6), nrow=2, ncol=3)
-# mat [[2]][[1]]
-# mat[2,1]
-mat
-print(mat[,1:2])
-
-
-5 %in% mat
-
-mat[5] <- 10
-mat
-
-arradata <- array(1:27, dim = c(2,2,3))
-arradata
-arradata[1,2,1]
-
-7 %in% arradata
-
+library(tidyverse)
 ```
 
 ```{r}
+data <- data.frame( id = c(1, 2, 3, 4, 5,6,6), 
+                    fulname = c("John Ola", "Alice Bola", NA, "Mike Anu", "Mike Modupe","Sarah Bolu", "Sarah"),
+                    age = c(25, NA, 35, 40, 40, 30, 30), 
+                    gender = c("M", "F", "M", NA, "M","F","F"),
+                    class = c("SS1", "SS2","SS1", "SS2","SS1", "SS2", "SS3"),
+                    salary = c(50000, 60000, NA,2000,70000, 80000,80000))
 
-
-arradata <- array(1:12, dim = c(2,3,2))
-
-column c(7, 8)
-
-dim(arradata)[1:3]
-
-```
-
-
-```{r}
-mata = matrix(c(2,3,4,5), nrow = 2, ncol = 2)
-print(mata)
-
-matb = matrix(c(7, 8), nrow = 1, ncol = 2)
-matb
-
-matc = rbind(mata, matb)
-matc
-
-2%in% matc
-
-```
-```{r}
-arradata <- array(1:27, dim = c(2,2,3))
-firstlayer =  arradata[,,1]
-
-for (i in firstlayer){
-  print(i)
-}
-
-
-for (i in 1:2) { 
-  for (j in 1:3) { 
-    print(arradata[i, j, 1]) }}
-
-
-arradata <- array(1:27, dim = c(2,2,3))
-
-firstlayer = arradata[,,1]
-
-for (i in seq_along(firstlayer)) {
-  print(firstlayer[i])
-}
-
-
-arradata <- array(1:27, dim = c(2,2,3))
-
-for (layer in 1:dim(arradata)[3]) {
-  print(arradata[1,1,layer])
-}
-
-for(i in dim(arradata)){
-  print(i)
-}
-
-# Create the array
-arradata <- array(1:27, dim = c(2, 2, 3))
-
-# Get the dimensions of the array
-dims <- dim(arradata)
-
-# Iterate through the layers
-for (i in 1:dims[3]) {
-  # Print the first element in each layer
-  cat("Layer", i, ":", arradata[1, 1, i], "\n")
-}
-
+data
 ```
 ```{r}
 
-df = data.frame( "Name"= c("Tosn", "Tola", "Bola"),
-                 "age"= c(1:3))
-
-df2 = data.frame( "Shool"= c("SS1", "SS2", "SS3"))
-
-df3 = cbind(df, df2)
-
-df3$Occupation <- c("Engineer", "Doctor", "Artist")
-
-df[df[age == 3]]
-
-
-for (i in 1:dim(df3)[2]){
-  print(df3[i, ])
-}
-```
-```{r}
-# Assuming df3 is your data frame
-for (i in 1:dim(df3)[2]) {
-  cat("Name:", df3$Name[i], ", Age:", df3$age[i], "\n")
-}
- 
-for (i in 1:nrow(df3)) {
-  print(paste("Name:", df3[i, "Name"], "- Age:", df3[i, "age"]))
-}
-
+data |> 
+  mutate( percentnum = (salary / sum(salary, na.rm = TRUE) * 100))
 ```
 
-
 ```{r}
-dfn = data.frame("church" = c("CAC", "Anglican"),
-                 "Years" = c(1,3))
+library(tidyr)
 
-fruit_factor = c("mango", "Apple", "Banana")
-sort(fruit_factor,decreasing = FALSE)
+data %>%
+  pivot_wider(names_from = gender, values_from = c(salary))
+
+# The 'wide_data' data frame will have 'M' and 'F' as columns with corresponding values
+
+
+data %>%
+  pivot_wider(names_from = gender, values_from = salary, names_prefix = "Salary_")
+```
+```{r}
+library(tidyr)
+
+wide_data <- data.frame(
+  ID = c(1, 2, 3),
+  Name = c("John", "Alice", "Mike"),
+  Age_M = c(25, 30, 35),
+  Age_F = c(NA, 35, 40),
+  Salary_M = c(50000, 60000, 70000),
+  Salary_F = c(55000, 60000, 72000)
+)
+
+
+long_data <- wide_data %>%
+  pivot_longer(
+    cols = starts_with("Age_") | starts_with("Salary_"),
+    names_to = c(".value", "gender"),
+    names_pattern = "(Age|Salary)_(.)"
+  )
+long_data
+# The 'long_data' data frame will have separate rows for age and salary for males and females.
 
 ```
 
