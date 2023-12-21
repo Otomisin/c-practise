@@ -8,3 +8,103 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+```{r}
+library(tidyverse)
+library(ggtext)
+library(ggplot2)
+library(janitor)
+library(sf)
+```
+
+
+```{r}
+data <- data.frame( id = c(1, 2, 3, 4, 5,6,6), 
+                    name = c("John", "Alice", NA, "Mike", "Mike","Sarah", "Sarah"), 
+                    age = c(25, NA, 35, 40, 40, 30, 30), 
+                    gender = c("M", "F", "M", NA, "M","F","F"), 
+                    salary = c(50000, 60000, NA,2000,70000, 80000,80000))
+
+```
+```{r}
+data |> 
+  mutate(name = if_else(is.na(name), "No Reply", name),
+         age = if_else(is.na(age), mean(age, na.rm = TRUE) , age),
+         name = if_else((name == "John" | name == "Alice"), "Tolu", name ),
+         age = as.numeric(age))
+         
+```
+```{r}
+data |> 
+  get_dupes(gender)
+```
+```{r}
+data |> 
+  get_dupes() |>
+  mutate(duplicates = "These are duplicate")
+
+```
+
+```{r}
+data <- data.frame( id = c(1, 2, 3, 4, 5,6,6),
+                    name = c("John ", "Alice", NA, "Mike", "Mike","Sarah", "Sarah"),
+                    age = c(25, NA, 35, 40, 40, 30, 30),
+                    gender = c("M  ", "F", "  M", NA, "M","F","F"),
+                    salary = c(50000, 60000, NA,2000,70000, 80000,80000))
+
+# data_with_missing_vals =  data [!complete.cases(data), ]
+# data_with_missing_vals |> 
+#   mutate(Comments = paste(rowSums(data_with_missing_vals),"This has missing values"))
+
+```
+
+```{r}
+data <- data.frame( id = c(1, 2, 3, 4, 5,6,6),
+                    fulname = c("John Ola", "Alice Bola", NA, "Mike Anu", "Mike Modupe","Sarah Bolu", "Sarah"),
+                    age = c(25, NA, 35, 40, 40, 30, 30),
+                    gender = c("M  ", "F", "  M", NA, "M","F","F"),
+                    salary = c(50000, 60000, NA,2000,70000, 80000,80000))
+
+```
+
+```{r}
+data |>  
+  separate(fulname, into = c("fname", "lname"), sep = " ", remove = FALSE)
+
+```
+```{r}
+data <- data.frame( id = c(1, 2, 3, 4, 5,6,6),
+                    fulname_idp = c("John Ola", "Alice Bola", NA, "Mike Anu", "Mike Modupe","Sarah Bolu", "Sarah"),
+                    age = c(25, NA, 35, 40, 40, 30, 30),
+                    idp_gender = c("M", "F", "M", NA, "M","F","F"),
+                    class = c("SS1", "SS1", "SS2","SS2","SS2","SS1","SS3" ),
+                    salary = c(50000, 60000, NA,2000,70000, 80000,80000))
+```
+
+```{r}
+data |> 
+  mutate(salaryper = salary/sum(salary, na.rm = TRUE) * 100)
+
+
+```
+
+```{r}
+longitude <- c(-116.7, -120.4, -116.7, -113.5, -115.5,
+               -120.8, -119.5, -113.7, -113.7, -110.7)
+latitude <- c(45.3, 42.6, 38.9, 42.1, 35.7, 38.9,
+              36.2, 39, 41.6, 36.9)
+
+stations <- cbind(longitude, latitude)
+stations_df <- as.data.frame(stations)
+
+stations_df_sf <- st_as_sf(stations_df, coords = c("longitude", "latitude"), crs = 4326)
+class(stations_df_sf)
+
+
+sf_object <- st_sf(geometry = st_point(cbind(longitude, latitude)))
+
+```
+```{r}
+
+```
+
