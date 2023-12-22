@@ -87,24 +87,3 @@ data |>
 
 
 ```
-
-```{r}
-longitude <- c(-116.7, -120.4, -116.7, -113.5, -115.5,
-               -120.8, -119.5, -113.7, -113.7, -110.7)
-latitude <- c(45.3, 42.6, 38.9, 42.1, 35.7, 38.9,
-              36.2, 39, 41.6, 36.9)
-
-stations <- cbind(longitude, latitude)
-stations_df <- as.data.frame(stations)
-
-stations_df_sf <- st_as_sf(stations_df, coords = c("longitude", "latitude"), crs = 4326)
-class(stations_df_sf)
-
-
-sf_object <- st_sf(geometry = st_point(cbind(longitude, latitude)))
-
-```
-```{r}
-
-```
-
