@@ -21,31 +21,65 @@ library(sf)
 longitude <- c(-116.7, -120.4, -116.7, -113.5, -115.5, -120.8, -119.5, -113.7, -113.7, -110.7)
 latitude <- c(45.3, 42.6, 38.9, 42.1, 35.7, 38.9, 36.2, 39, 41.6, 36.9)
 
-sf_data = cbind(longitude,latitude)
+binded = cbind(longitude, latitude)
 
-st_data2 = sf_data |>
-  as.data.frame() |>
-  st_as_sf(coords = c("longitude", "latitude"), crs= 4326)
+plot(st_multipoint (binded))
+
+
 ```
 ```{r}
 plot(st_data2)
 ```
 ```{r}
-# Load necessary library
-library(sf)
+longitude <- c(-116.7, -120.4, -116.7, -113.5, -115.5, -120.8, -119.5, -113.7, -113.7, -110.7)
+latitude <- c(45.3, 42.6, 38.9, 42.1, 35.7, 38.9, 36.2, 39, 41.6, 36.9)
 
-# Create points
-point1 <- st_point(c(-116.7, 45.3)) # First point (longitude, latitude)
-point2 <- st_point(c(-120.4, 42.6)) # Second point (longitude, latitude)
-
-# Combine points into a single sf object
-points_sf <- st_sfc(point1, point2, crs = 4326)
-
-# Plot points
-plot(points_sf)
+point_sf <- cbind(longitude, latitude)
+point_sfv1 = point_sf |> 
+  as.data.frame() |> 
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326)
 
 ```
 ```{r}
-st_is_valid(point_sf)
+
+longitude <- c(-116.7, -120.4, -116.7, -113.5, -115.5, -120.8, -119.5, -113.7, -113.7, -110.7)
+latitude <- c(45.3, 42.6, 38.9, 42.1, 35.7, 38.9, 36.2, 39, 41.6, 36.9)
+
+plot(st_point(cbind(longitude[1:2], latitude[1:2])))
+```
+```{r}
+line_sf <- cbind(longitude, latitude)
+plot(st_linestring(line_sf ))
+
+```
+
+```{r}
+
+# Load the necessary library
+library(sf)
+
+# Define the vectors for longitude and latitude
+longitude <- c(-116.7, -120.4, -116.7, -113.5, -115.5, -120.8, -119.5, -113.7, -113.7, -110.7)
+latitude <- c(45.3, 42.6, 38.9, 42.1, 35.7, 38.9, 36.2, 39, 41.6, 36.9)
+
+# Combine the first five pairs of coordinates
+bindsf <- cbind(longitude[1:5], latitude[1:5])
+
+# Close the polygon by adding the first point at the end
+bindsfr <- rbind(bindsf, c(longitude[1], latitude[1]))
+
+# Convert to list
+bindsfrlist <- list(bindsfr)
+
+# Create a polygon object
+bindsfrlistpol <- st_polygon(bindsfrlist)
+
+# Plot the polygon
+plot(bindsfrlistpol)
+
+```
+
+```{r}
+plot(st_multipoint(cbind(longitude, latitude)))
 ```
 
