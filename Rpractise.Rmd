@@ -18,92 +18,33 @@ library(sf)
 library(units)
 ```
 
-
 ```{r}
-
-# Load the necessary library
-library(sf)
-
-# Define the vectors for longitude and latitude
+# How can you use a for loop to calculate the sum of numbers from 1 to 10?
 longitude <- c(-116.7, -120.4, -116.7, -113.5, -115.5, -120.8, -119.5, -113.7, -113.7, -110.7)
 latitude <- c(45.3, 42.6, 38.9, 42.1, 35.7, 38.9, 36.2, 39, 41.6, 36.9)
-
-# Combine the first five pairs of coordinates
-bindsf <- cbind(longitude[1:5], latitude[1:5])
-
-# Close the polygon by adding the first point at the end
-bindsfr <- rbind(bindsf, c(longitude[1], latitude[1]))
-
-# Convert to list
-bindsfrlist <- list(bindsfr)
-
-# Create a polygon object
-bindsfrlistpol <- st_polygon(bindsfrlist)
-
-# Plot the polygon
-plot(bindsfrlistpol)
-
-```
-
-```{r}
-plot(st_multipoint(cbind(longitude, latitude)))
 ```
 ```{r}
-longitude <- c(-116.7, -120.4, -116.7, -113.5, -115.5, -120.8, -119.5, -113.7, -113.7, -110.7)
-latitude <- c(45.3, 42.6, 38.9, 42.1, 35.7, 38.9, 36.2, 39, 41.6, 36.9)
-
-linesf = cbind(longitude[1:4], latitude[1:4])
-
-linesfv2 = linesf |> 
-  as.data.frame() |> 
-  st_as_sf( coords = c("longitude","latitude" ),crs = 4326)
-
-plot(st_polygon(list(polysfv2)))
 
 
-plot(st_linestring(linesf))
+# Multiple lines
+line_1 = cbind(longitude[1:5], latitude[1:5])
+line_2 = cbind(longitude[6:10], latitude[6:10])
+comb_line = list(line_1, line_2)
+m_lines = st_multilinestring(comb_line)
+
+# Mulitple points
+mpoints = cbind(longitude, latitude)
+mpoints = st_multipoint(mpoints)
 
 
-```
+# A point
 
-```{r}
-linesf = cbind(longitude[1], latitude[1])
+one_point = cbind(longitude[1], latitude[1])
+one_point = st_point(one_point)
 
-plot(st_multipoint(linesf))
-```
-```{r}
-multilinestring <- st_multilinestring(list(cbind(longitude[1:5], latitude[1:5]), cbind(longitude[6:10], latitude[6:10])))
+allgeom = list(one_point, mpoints, m_lines)
 
-plot(multilinestring)
-
-# Combine first five pairs of longitude and latitude
-line1 <- cbind(longitude[1:5], latitude[1:5])
-
-# Combine next five pairs of longitude and latitude
-line2 <- cbind(longitude[6:10], latitude[6:10])
-
-# Create a list of these two lines
-lines_list <- list(line1, line2)
-
-# Create a multi-linestring object
-multi_line <- st_multilinestring(lines_list)
-
-# Print the multi-linestring object
-print(multi_line)
-```
-
-```{r}
-point <- st_point(c(longitude[1], latitude[1]))
-
-multipoint <- st_multipoint(cbind(longitude, latitude))
-
-multilinestring <- st_multilinestring(list(cbind(longitude[1:5], latitude[1:5]), cbind(longitude[6:10], latitude[6:10])))
-
-geom_collection <- st_geometrycollection(list(point, multipoint, multilinestring))
-
-plot(geom_collection)
-
-st_make_valid(geom_collection)
+plot(st_geometrycollection(allgeom))
 
 ```
 
@@ -111,22 +52,76 @@ st_make_valid(geom_collection)
 longitude <- c(-116.7, -120.4, -116.7, -113.5, -115.5, -120.8, -119.5, -113.7, -113.7, -110.7)
 latitude <- c(45.3, 42.6, 38.9, 42.1, 35.7, 38.9, 36.2, 39, 41.6, 36.9)
 
-line = st_linestring(cbind(longitude[1:5], latitude[1:5]))
-# st_length(line)
+linesf = st_linestring(cbind(longitude[1:5], latitude[1:5]))
 
-line = st_sfc(line, crs = 4326)
+st_is_valid(linesf)
 
-# Assgin a projected coordinate
-line2 = st_transform(line, crs = 26391)
 
-# Calculate length in meters
-length_in_meters <- st_length(line2)
+line_sf = st_sfc(linesf, crs = 26391)
 
-# Convert length to kilometers
-length_in_km <- set_units(length_in_meters, km)
 
-# Print the length in kilometers
-print(length_in_km)
+
+
+st_length(line_sf)
+
+# plot(linesf)
+```
+```{r}
+mat_sm = matrix(c(1,2,3,4,2,1), nrow = 2, ncol = 3)
+mat_sm
+
+for(i in mat_sm){
+  print (i)
+}
+
+
+mat_sm = matrix(c(1,2,3,4,2,1), nrow = 2, ncol = 3)
+mat_sm
+for(i in 1:length(mat_sm)){
+  if(i > 2)
+    {print (i)}
+}
+```
+
+```{r}
+char = "x"
+vowels = c("a","e","i", "o", "u")
+
+if(char %in% vowels){
+  cat({char}, 'is a vowel') 
+} else{
+  cat({char}, 'is a consonant')
+}
+
+```
+```{r}
+num = 3
+
+if(num > 0){
+  cat({num}, 'is a positive') 
+} else if(num == 0){
+  cat({num}, 'is a Zero') 
+} else{
+  cat({num}, 'is a negative') 
+}
+```
+```{r}
+year = 2000
+
+if((year %% 4 == 0 && year %% 100 != 0) | year %% 400 == 0){
+  cat({year}, 'is a Leap Year') 
+} else{
+  cat({year}, 'is not a Leap Year') 
+}
+
+
+year = 2000
+
+if ((year %% 4 == 0 && year %% 100 != 0) || year %% 400 == 0) {
+  cat(year, 'is a Leap Year') 
+} else {
+  cat(year, 'is not a Leap Year') 
+}
 
 ```
 
