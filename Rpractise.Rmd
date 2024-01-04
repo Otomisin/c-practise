@@ -10,6 +10,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
+
+# package2install = c("tidyverse", "sf", "ggplot2", "janitor", "units", "ggtext")
+# install.packages(package2install)
+
 library(tidyverse)
 library(ggtext)
 library(ggplot2)
@@ -17,111 +21,81 @@ library(janitor)
 library(sf)
 library(units)
 ```
+```{r} 
+sum = 0
+for (i in 1:10) {
+  sum <- sum + i
+}
 
-```{r}
-# How can you use a for loop to calculate the sum of numbers from 1 to 10?
-longitude <- c(-116.7, -120.4, -116.7, -113.5, -115.5, -120.8, -119.5, -113.7, -113.7, -110.7)
-latitude <- c(45.3, 42.6, 38.9, 42.1, 35.7, 38.9, 36.2, 39, 41.6, 36.9)
-```
-```{r}
-
-
-# Multiple lines
-line_1 = cbind(longitude[1:5], latitude[1:5])
-line_2 = cbind(longitude[6:10], latitude[6:10])
-comb_line = list(line_1, line_2)
-m_lines = st_multilinestring(comb_line)
-
-# Mulitple points
-mpoints = cbind(longitude, latitude)
-mpoints = st_multipoint(mpoints)
-
-
-# A point
-
-one_point = cbind(longitude[1], latitude[1])
-one_point = st_point(one_point)
-
-allgeom = list(one_point, mpoints, m_lines)
-
-plot(st_geometrycollection(allgeom))
+print(sum)
 
 ```
 
 ```{r}
-longitude <- c(-116.7, -120.4, -116.7, -113.5, -115.5, -120.8, -119.5, -113.7, -113.7, -110.7)
-latitude <- c(45.3, 42.6, 38.9, 42.1, 35.7, 38.9, 36.2, 39, 41.6, 36.9)
-
-linesf = st_linestring(cbind(longitude[1:5], latitude[1:5]))
-
-st_is_valid(linesf)
-
-
-line_sf = st_sfc(linesf, crs = 26391)
-
-
-
-
-st_length(line_sf)
-
-# plot(linesf)
-```
-```{r}
-mat_sm = matrix(c(1,2,3,4,2,1), nrow = 2, ncol = 3)
-mat_sm
-
-for(i in mat_sm){
-  print (i)
+sumall <- function(x, y) {
+  add = x + y
+  sub = x - y
+  mul = x * y
+  div = x / y
+  return(list(addition = add , subtraction = sub, multiplication = mul, division = div))
 }
 
 
-mat_sm = matrix(c(1,2,3,4,2,1), nrow = 2, ncol = 3)
-mat_sm
-for(i in 1:length(mat_sm)){
-  if(i > 2)
-    {print (i)}
-}
-```
+result = sumall(2, 3)
+print(result$subtraction)
 
-```{r}
-char = "x"
-vowels = c("a","e","i", "o", "u")
-
-if(char %in% vowels){
-  cat({char}, 'is a vowel') 
-} else{
-  cat({char}, 'is a consonant')
-}
 
 ```
 ```{r}
-num = 3
-
-if(num > 0){
-  cat({num}, 'is a positive') 
-} else if(num == 0){
-  cat({num}, 'is a Zero') 
-} else{
-  cat({num}, 'is a negative') 
+fullname <- function( lname ,fname = "Tosin"){
+  flname <- paste(fname, lname)
+  return(flname)
 }
+
+fullname = fullname("Orenaike")
+print(fullname)
+```
+
+```{r}
+# 11: Write a function in R to check whether x is even or odd.
+
+checkx = function(x){
+  if(x %% 2 == 0){
+    cat({x}, "is a even number")
+  }else{
+    cat({x}, "is not even but odd number")
+  }
+}
+
+number = checkx(4)
+print(number())
 ```
 ```{r}
-year = 2000
-
-if((year %% 4 == 0 && year %% 100 != 0) | year %% 400 == 0){
-  cat({year}, 'is a Leap Year') 
-} else{
-  cat({year}, 'is not a Leap Year') 
-}
+my_function <- function(fname) { 
+ paste(fname, "Griffin") } 
 
 
-year = 2000
 
-if ((year %% 4 == 0 && year %% 100 != 0) || year %% 400 == 0) {
-  cat(year, 'is a Leap Year') 
-} else {
-  cat(year, 'is not a Leap Year') 
-}
+my_function("Peter") 
+my_function("Lois") 
+my_function("Stewie")
+
+```
+
+```{r}
+
+data <- data.frame( id = c(1, 2, 3, 4, 5,6,6),
+                    name = c("John ", "Alice", NA, "Mike", "Mike","Sarah", "Sarah"),
+                    age = c(25, NA, 35, 40, 40, 30, 30),
+                    gender = c("M  ", "F", "  M", NA, "M","F","F"),
+                    salary = c(50000, 60000, NA,2000,70000, 80000,80000))
+```
+```{r}
+
+datav1 = data |> 
+  mutate(gender = str_trim(gender))
+
+colMeans(is.na (data) * 100)
 
 ```
 
