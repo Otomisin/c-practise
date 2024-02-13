@@ -66,6 +66,16 @@ fruits[-2]
 
 
 ```{r}
+arraysf = array(1:12, dim = c(2,2,2))
+
+
+matsample = matrix(1:6, nrow = 2, ncol = 3)
+
+matsample[1, ]
+
+
+df = data.frame( name = c("Tosin", "Tola", "Bola"),
+                 age = c(1,2,3))
 
 ```
 
