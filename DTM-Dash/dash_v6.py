@@ -47,7 +47,7 @@ def app():
     st.sidebar.markdown("### DATA POINT - TOOLS")
     # st.sidebar.info("This dashboard provides an interactive way to explore reports. Select filters from the sidebar to customize the display. You can download as a csv")
    #st.sidebar.info("This dashboard provides an interactive way to explore reports. Select filters from the sidebar to customize the display. You can download as a csv")
-    with st.sidebar.expander("**About This App**"):
+    with st.sidebar.expander("**About this App**"):
         st.write("""
             This dashboard provides an interactive way to explore reports published by IOM DTM. 
             Select filters from the sidebar to customize the display. You can download as a csv
