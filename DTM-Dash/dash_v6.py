@@ -52,7 +52,7 @@ def app():
             This dashboard provides an interactive way to explore reports published by IOM DTM. 
             Select filters from the sidebar to customize the display. You can download as a csv
     
-            For more information, visit our [DTM](https://dtm.iom.int/).
+            For more information, visit [DTM](https://dtm.iom.int/).
     
             ### Contact
             For queries, please contact us at [here](https://dtm.iom.int/contact).
