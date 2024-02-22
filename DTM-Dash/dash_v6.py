@@ -106,11 +106,11 @@ def app():
         mime='text/csv',
     )
     
-    col1, col2, col3 = st.sidebar.columns([2,1,1])
-    with col2:
-        st.image('https://raw.githubusercontent.com/Otomisin/c-practise/main/DTM-Dash/IOMlogo.png', width=70)
-    with col1:
-      st.markdown(" ***DTM-AKO***")
+    # col1, col2, col3 = st.sidebar.columns([2,1,1])
+    # with col2:
+    #     st.image('https://raw.githubusercontent.com/Otomisin/c-practise/main/DTM-Dash/IOMlogo.png', width=70)
+    # with col1:
+    #   st.markdown(" ***DTM-AKO***")
 
 if __name__ == '__main__':
     app()
