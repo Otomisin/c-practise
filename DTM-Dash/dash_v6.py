@@ -47,15 +47,15 @@ def app():
     # st.sidebar.info("This dashboard provides an interactive way to explore reports. Select filters from the sidebar to customize the display. You can download as a csv")
    #st.sidebar.info("This dashboard provides an interactive way to explore reports. Select filters from the sidebar to customize the display. You can download as a csv")
     with st.sidebar.expander("About This App"):
-    st.write("""
-        This dashboard provides an interactive way to explore reports published by IOM DTM. 
-        Select filters from the sidebar to customize the display. You can download as a csv It allows users to ...
-
-        For more information, visit our [DTM](https://dtm.iom.int/).
-
-        ### Contact
-        For queries, please contact us at [here](https://dtm.iom.int/contact).
-        """)
+        st.write("""
+            This dashboard provides an interactive way to explore reports published by IOM DTM. 
+            Select filters from the sidebar to customize the display. You can download as a csv It allows users to ...
+    
+            For more information, visit our [DTM](https://dtm.iom.int/).
+    
+            ### Contact
+            For queries, please contact us at [here](https://dtm.iom.int/contact).
+            """)
 
     
     st.markdown("---")
