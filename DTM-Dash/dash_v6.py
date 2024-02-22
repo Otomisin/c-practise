@@ -44,7 +44,19 @@ def app():
     # Display logo and custom message in the sidebar
     # st.sidebar.image('path_to_logo.png', use_column_width=True)  # Uncomment and replace path
     st.sidebar.markdown("### DTM REPORT - TOOLS")
+    # st.sidebar.info("This dashboard provides an interactive way to explore reports. Select filters from the sidebar to customize the display. You can download as a csv")
    #st.sidebar.info("This dashboard provides an interactive way to explore reports. Select filters from the sidebar to customize the display. You can download as a csv")
+    with st.sidebar.expander("About This App"):
+    st.write("""
+        This dashboard provides an interactive way to explore reports published by IOM DTM. 
+        Select filters from the sidebar to customize the display. You can download as a csv It allows users to ...
+
+        For more information, visit our [DTM](https://dtm.iom.int/).
+
+        ### Contact
+        For queries, please contact us at [here](https://dtm.iom.int/contact).
+        """)
+
     
     st.markdown("---")
     st.sidebar.markdown("---")
