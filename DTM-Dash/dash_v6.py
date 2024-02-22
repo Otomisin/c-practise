@@ -43,8 +43,8 @@ def app():
 
     # Display logo and custom message in the sidebar
     # st.sidebar.image('path_to_logo.png', use_column_width=True)  # Uncomment and replace path
-    st.sidebar.markdown("### ABOUT")
-    st.sidebar.info("This dashboard provides an interactive way to explore reports. Select filters from the sidebar to customize the display. You can download as a csv")
+    st.sidebar.markdown("### DTM REPORT - TOOLS")
+   #st.sidebar.info("This dashboard provides an interactive way to explore reports. Select filters from the sidebar to customize the display. You can download as a csv")
     
     st.markdown("---")
     st.sidebar.markdown("---")
@@ -97,7 +97,7 @@ def app():
     with col1:
         st.image('https://raw.githubusercontent.com/Otomisin/c-practise/main/DTM-Dash/IOMlogo.png', width=70)
     with col2:
-      st.markdown(" Made by ***DTM-AKO***")
+      st.markdown(" ***DTM-AKO***")
 
 if __name__ == '__main__':
     app()
