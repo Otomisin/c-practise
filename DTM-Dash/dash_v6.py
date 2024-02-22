@@ -105,7 +105,7 @@ def app():
         mime='text/csv',
     )
     
-    col1, col2, col3 = st.sidebar.columns([1,2,1])
+    col1, col2, col3 = st.sidebar.columns([2,1,1])
     with col2:
         st.image('https://raw.githubusercontent.com/Otomisin/c-practise/main/DTM-Dash/IOMlogo.png', width=70)
     with col1:
