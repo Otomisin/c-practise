@@ -64,7 +64,7 @@ def app():
     st.image('https://raw.githubusercontent.com/Otomisin/c-practise/main/DTM-Dash/IOMlogo.png', width=70)
     st.title('DTM Report Dashboard')
     st.caption(f'Reports updated as of: {now.strftime("%Y-%m-%d")}')
-    st.write(f" **DATE:** {last_date} - {least_date} | **{total_report_crawled} Reports** Crawled | **{total_recent_reports}** in the last 48hrs")
+    st.write(f" **DATE:** {last_date} - {least_date} | **{total_report_crawled} Reports** Crawled | **{total_recent_reports} Reports** in the last 48hrs")
     st.markdown("---")
 
     # Your app's sidebar and filtering logic
