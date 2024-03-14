@@ -53,7 +53,7 @@ def app():
     two_days_ago = now - timedelta(days=2)
     recent_reports = df[df['Published Date'] >= two_days_ago]
     total_recent_reports = len(recent_reports)
-    total_report_crawled = len(reports_data)
+    total_report_crawled = len(df)
 
     least_date = df['Published Date'].min().strftime('%Y-%m-%d') if not df['Published Date'].isnull().all() else "No Dates Available"
     last_date = df['Published Date'].max().strftime('%Y-%m-%d') if not df['Published Date'].isnull().all() else "No Dates Available"
