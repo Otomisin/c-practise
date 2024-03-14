@@ -6,6 +6,8 @@ import re
 from datetime import datetime, timedelta
 
 # Web Crawler Functions
+# Function to scrape data
+@st.cache_data
 def scrape_data_new():
     url = 'https://dtm.iom.int/reports?search=&sort_by=field_published_date&sort_order=DESC'
     headers = {
@@ -80,9 +82,12 @@ def app():
                 """)
         st.markdown("---")
 
-        if st.button('Reload Data'):
-            st.legacy_caching.clear_cache()
-            st.experimental_rerun()
+        if st.sidebar.button('Reload Data'):
+            # This will clear the cache and reload the data
+            st.cache_data.clear()
+            st.rerun()
+            # st.experimental_rerun()
+
 
     country_options = df['Country Name'].unique()
 
