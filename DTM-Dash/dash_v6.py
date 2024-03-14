@@ -113,7 +113,8 @@ def app():
 
     # Download option for filtered data
     st.sidebar.markdown("### Download Data")
-    csv = filtered_data.to_csv(index=False).encode('utf-8')
+    # Before the download button
+    csv = filtered_data.to_csv(index=False, encoding='utf-8-sig').encode('utf-8-sig')
     st.sidebar.download_button(
         label="Download filtered data as CSV",
         data=csv,
