@@ -3,13 +3,15 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
-# Function to scrape data
-@st.cache_data
-def scrape_data():
+# Web Crawler Functions
+def scrape_data_new():
     url = 'https://dtm.iom.int/reports?search=&sort_by=field_published_date&sort_order=DESC'
-    response = requests.get(url)
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+    }
+    response = requests.get(url, headers=headers)
     response.encoding = 'utf-8'
     dtm_soup = BeautifulSoup(response.content, 'html.parser')
     dtm_reports = dtm_soup.find_all('div', class_='report-item1')
@@ -19,18 +21,22 @@ def scrape_data():
         title = report.find('a', class_='title').text.strip()
         report_html = str(report)
         links = re.findall(r'href="(/reports/[^"]+)"', report_html)
-        report_link = 'https://dtm.iom.int' + links[0] if links else None
-        date = report.find('div', class_='date').text.split('·')[0].strip()
+        report_link = f'https://dtm.iom.int{links[0]}' if links else None
+        date_info = report.find('div', class_='date').text.split('·')
+        date = pd.to_datetime(date_info[0].strip(), errors='coerce', format='%b %d %Y')
+        region = date_info[1].strip() if len(date_info) > 1 else 'Unknown'
+        country_name = date_info[2].strip() if len(date_info) > 2 else 'Unknown'
+        report_type = date_info[3].strip() if len(date_info) > 3 else 'Unknown'
         summary_content = report.find('div', class_='content').text.strip()
-        country_anchors = report.find_all('a', href=True)
-        country_name = country_anchors[-1].text.strip() if country_anchors else 'Unknown'
-        
+
         reports_data.append({
             'Title': title,
             'Summary': summary_content,
             'Link': report_link,
-            'Published Date': pd.to_datetime(date),
-            'Country Name': country_name
+            'Published Date': date,
+            'Country Name': country_name,
+            'Region': region,
+            'Report Type': report_type
         })
 
     return pd.DataFrame(reports_data)
@@ -38,47 +44,47 @@ def scrape_data():
 # Streamlit app setup
 def app():
     st.set_page_config(page_title='DTM Report Dashboard', page_icon='📊', layout="centered")
-    st.title('Interactive Report Dashboard')
-    st.caption(f'Reports updated as of: {datetime.now().strftime("%Y-%m-%d")}')
+    
+    # Load data using the new web crawler
+    df = scrape_data_new()
+    
+    # Calculate reports published in the last 48 hours
+    now = datetime.now()
+    two_days_ago = now - timedelta(days=2)
+    recent_reports = df[df['Published Date'] >= two_days_ago]
+    total_recent_reports = len(recent_reports)
 
-    # Display logo and custom message in the sidebar
-    # st.sidebar.image('path_to_logo.png', use_column_width=True)  # Uncomment and replace path
+    least_date = df['Published Date'].min().strftime('%Y-%m-%d') if not df['Published Date'].isnull().all() else "No Dates Available"
+    last_date = df['Published Date'].max().strftime('%Y-%m-%d') if not df['Published Date'].isnull().all() else "No Dates Available"
+
+    # Update title and subtitle with new structure
     st.image('https://raw.githubusercontent.com/Otomisin/c-practise/main/DTM-Dash/IOMlogo.png', width=70)
-    st.sidebar.markdown("### DATA POINT - TOOLS")
-    # st.sidebar.info("This dashboard provides an interactive way to explore reports. Select filters from the sidebar to customize the display. You can download as a csv")
-   #st.sidebar.info("This dashboard provides an interactive way to explore reports. Select filters from the sidebar to customize the display. You can download as a csv")
-    with st.sidebar.expander("**About this App**"):
-        st.write("""
-            This dashboard provides an interactive way to explore reports published by IOM DTM. 
-            Select filters from the sidebar to customize the display. You can download as a csv
-    
-            For more information, visit [DTM](https://dtm.iom.int/).
-    
-            ### Contact
-            For queries, please contact us at [here](https://dtm.iom.int/contact).
-            """)
-
-    
+    st.title('DTM Report Dashboard')
+    st.caption(f'Reports updated as of: {now.strftime("%Y-%m-%d")}')
+    st.write(f" **DATE:** {last_date} - {least_date} | **{total_recent_reports}** reports in the last 48hrs")
     st.markdown("---")
-    st.sidebar.markdown("---")
-    
-    # Custom sidebar with reload option
-    # st.sidebar.markdown("<h2 style='text-align: left;'>Data Management</h2>", unsafe_allow_html=True)
-    if st.sidebar.button('Reload Data'):
-        # This will clear the cache and reload the data
-        st.cache_data.clear()
-        st.experimental_rerun()
 
-    # Load data
-    df = scrape_data()
-    
-    # Sidebar for filtering
-    st.sidebar.markdown("<h2 style='text-align: left;'>Filters</h2>", unsafe_allow_html=True)
+    # Your app's sidebar and filtering logic
+    with st.sidebar:
+        st.markdown("### DATA POINT - TOOLS")
+        with st.expander("**About this App**"):
+            st.write("""
+                This dashboard provides an interactive way to explore reports published by IOM DTM. 
+                Select filters from the sidebar to customize the display. You can download data as CSV.
+        
+                For more information, visit [DTM](https://dtm.iom.int/).
+        
+                ### Contact
+                For queries, please contact us at [here](https://dtm.iom.int/contact).
+                """)
+        st.markdown("---")
+
+        if st.button('Reload Data'):
+            st.legacy_caching.clear_cache()
+            st.experimental_rerun()
+
     country_options = df['Country Name'].unique()
-    
 
-
-    # Select all countries option
     all_countries = st.sidebar.checkbox("Select All Countries", True)
     if all_countries:
         selected_countries = st.sidebar.multiselect('Select Country:', options=country_options, default=country_options)
@@ -90,9 +96,18 @@ def app():
 
     # Displaying filtered data
     for index, row in filtered_data.iterrows():
-        st.subheader(row['Title'])
-        st.write(f"Published Date: {row['Published Date'].strftime('%d-%b-%Y')}")
-        st.write(f"Country: {row['Country Name']}")
+        # Formatting the title display
+        st.markdown(f"### {row['Title']}")     
+                
+        # Check if 'Published Date' is NaT before formatting, else format it
+        if pd.isna(row['Published Date']):
+            formatted_date = "Date Not Available"
+        else:
+            formatted_date = row['Published Date'].strftime('%d-%b-%Y')
+        
+        # Display 'Published Date', 'Country', and 'Report Type' in the desired format
+        st.markdown(f"**{formatted_date} | {row['Country Name']} | {row['Report Type']}**")
+        
         st.write(row['Summary'])
         st.markdown(f"[Read More]({row['Link']})", unsafe_allow_html=True)
 
@@ -105,12 +120,6 @@ def app():
         file_name='filtered_data.csv',
         mime='text/csv',
     )
-    
-    # col1, col2, col3 = st.sidebar.columns([2,1,1])
-    # with col2:
-    #     st.image('https://raw.githubusercontent.com/Otomisin/c-practise/main/DTM-Dash/IOMlogo.png', width=70)
-    # with col1:
-    #   st.markdown(" ***DTM-AKO***")
 
 if __name__ == '__main__':
     app()
