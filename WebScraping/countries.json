@@ -1,0 +1,52 @@
+[
+  {
+      "name": "United States",
+      "abbreviations": ["US", "USA", "America"],
+      "alternatives": ["United States of America"]
+  },
+  {
+      "name": "United Kingdom",
+      "abbreviations": ["UK", "GB", "Britain"],
+      "alternatives": ["Great Britain", "England"]
+  },
+  {
+      "name": "Germany",
+      "abbreviations": ["DE"],
+      "alternatives": ["Deutschland", "Federal Republic of Germany"]
+  },
+  {
+      "name": "Russia",
+      "abbreviations": ["RU", "RUS"],
+      "alternatives": ["Russian Federation"]
+  },
+  {
+      "name": "China",
+      "abbreviations": ["CN", "CHN"],
+      "alternatives": ["People's Republic of China", "PRC"]
+  },
+  {
+      "name": "Canada",
+      "abbreviations": ["CA", "CAN"],
+      "alternatives": []
+  },
+  {
+      "name": "Australia",
+      "abbreviations": ["AU", "AUS"],
+      "alternatives": []
+  },
+  {
+      "name": "France",
+      "abbreviations": ["FR", "FRA"],
+      "alternatives": ["French Republic"]
+  },
+  {
+      "name": "India",
+      "abbreviations": ["IN", "IND"],
+      "alternatives": ["Republic of India"]
+  },
+  {
+      "name": "Brazil",
+      "abbreviations": ["BR", "BRA"],
+      "alternatives": ["Federative Republic of Brazil"]
+  }
+]
