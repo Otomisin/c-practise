@@ -338,6 +338,35 @@ GoogleNews_Mig_Df_Adj
 ```
 
 
+#### Create a single CTA / other entity code column
+```{python}
+
+GoogleNews_Mig_Df_Clean = GoogleNews_Mig_Df_Adj
+
+for index, newsRow in GoogleNews_Mig_Df_Clean.iterrows():
+
+    EntityCodeCols = ["ISO3166_1_Alpha3_CtaFound",
+                     "Code_NonCtaFound",
+                     "ISO3166_1_Alpha3_of_DemonymsFound"]
+
+    CrossCol_EntityCodes_List = []
+    for entityCodeCol in EntityCodeCols:
+        if newsRow[entityCodeCol] != "No entity names":
+            SplitEntityCodes_List = newsRow[entityCodeCol].split(";;;")
+
+            CrossCol_EntityCodes_List.extend(SplitEntityCodes_List)
+
+            print(SplitEntityCodes_List)
+    
+    Unique_CrossCol_EntityCodes_List = list(set(CrossCol_EntityCodes_List))
+
+    Unique_CrossCol_EntityCodes_Str = ";;;".join(Unique_CrossCol_EntityCodes_List)
+
+    GoogleNews_Mig_Df_Clean.loc[index, "EntityCodes_Detected"] = Unique_CrossCol_EntityCodes_Str
+
+GoogleNews_Mig_Df_Clean
+```
+
 Scrap notes:
      DemonymTotals_Edit <-
        DemonymTotals |> #Irregular plurals
