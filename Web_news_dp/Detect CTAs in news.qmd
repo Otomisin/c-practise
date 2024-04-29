@@ -1,0 +1,355 @@
+---
+title: "Extract Countries, Territories, and Areas in News Text"
+format: html
+---
+
+
+### Setup
+```{python}
+import os
+
+os.chdir(r"C:\Users\aasil\OneDrive - International Organization for Migration - IOM\Documents\Python documents\Datapoints")
+```
+
+### Get news articles
+```{python}
+from gnews import GNews
+import pandas as pd
+import re
+
+# Create an instance of GNews with parameters
+# google_news = GNews(language='en', country='US', period='7d', start_date=None, end_date=None, max_results=10, exclude_websites=['yahoo.com', 'cnn.com'],proxy=proxy)
+GoogleNews = GNews(language='en', max_results=30)
+
+# Search for NEWS with "migrant"
+GoogleNews_Mig = GoogleNews.get_news('migrant')
+# print(migration_news[0])
+
+# Display in DataFrame
+GoogleNews_Mig_Df = pd.DataFrame(GoogleNews_Mig)
+
+# Extract just the 'title' value from the 'publisher' column
+GoogleNews_Mig_Df['publisher'] = GoogleNews_Mig_Df['publisher'].apply(lambda x: x['title'])
+
+# Display the DataFrame
+GoogleNews_Mig_Df
+```
+
+### Regex and the countries and territories dataset from HDX
+The Countries and Territories dataset,^[See here: https://data.humdata.org/dataset/countries-and-territories] found on Humanitarian Data Exchange (HDX), as well as containing country standards such as the ISO, also contains a column with regular expressions to detect country names even with variant spellings. This will be used for detecting CTAs that are mentioned in news text.
+
+```{python}
+import requests 
+CtaConventions_RawDf = pd.read_csv("Countries & Territories Taxonomy MVP - C&T Taxonomy with HXL Tags.csv")
+
+CtaConventionsDf = CtaConventions_RawDf.drop(index=[0], axis=0).copy()
+
+```
+
+:::{.callout-note}
+For the moment, the regex for Dominican Republic is missing. This is a Google Sheets referencing error.
+:::
+
+However, as it turns out, the regular expressions are not always likely to detect countries which are mentioned as a partial string. Rather, they seem best suited for matching country columns between datasets, provided any trailing spaces are removed.
+
+For example, the regex for the United States of America in the dataset is given as `united.?states\b(?!.*islands)|\bu\.?s\.?a\.?\b|^\s*u\.?s\.?\b(?!.*islands)`
+
+and while this regex (when cases are ignored) matches the string
+
+>`Washington Foreign Press Center Briefing on U.S.A. Migration Policy Overview - DVIDS`
+
+it does _not_ match the string
+>`Washington Foreign Press Center Briefing on U.S. Migration Policy Overview - DVIDS`
+
+This is not because the regex never matches the variant `U.S.`, as it will successfully match the following string:
+>U.S. embassy
+The difference of course being that it begins the string.
+
+It seems the reason why the regexps do not work well for partial strings is that they are written with caret `^` and `$` flags, which would lead to certain strings not being detected when they otherwise would be if they formed the full string. In order to use the regexps in this dataset, the approach chosen to avoid this problem is to amend the regexps by replacing the caret and dollar flags with the word boundary anchor `\b`, which would indicate that a word boundary is required (which includes the positions represented by `^` and `$` but includes other boundaries such as white spaces and any non-alphanumeric string). This has the effect of recognising only those partial strings which are whole words, as opposed to parts of a word.
+
+To replace the flags with `\b`, a meta-regex is used which captures `^` and `$`, but ignores them when they are escaped with `/` as string literals, and also ignores `^` when it is used to create a negated set as in `[^]`. The meta-regex used is `((?<!\\|\[)\^)|((?<!\\)\$)`.
+
+The function to do this is defined below.
+```{python}
+def regexWordBoundary_replace_CaretDollar(regexString):
+
+    MetaRegex = r"((?<!\\|\[)\^)|((?<!\\)\$)"
+
+    CompiledMetaRegex = re.compile(MetaRegex)
+
+    # Since \b represents a backspace in Python, it is escaped to represent a word boundary regex.
+    ReplacedRegexStr = CompiledMetaRegex.sub(r"\\b", regexString)
+
+    return ReplacedRegexStr
+
+```
+
+
+
+Testing function:
+```{python}
+import re
+
+RegexStr_Usa = str(CtaConventionsDf[CtaConventionsDf["Preferred Term"] == "United States of America"]["Regex"].iloc[0])
+
+RegexStr_Usa_Compiled = re.compile(RegexStr_Usa, re.IGNORECASE)
+
+RegexStr_Usa_Corrected = regexWordBoundary_replace_CaretDollar(RegexStr_Usa)
+RegexStr_Usa_Corrected_Compiled = re.compile(RegexStr_Usa_Corrected, re.IGNORECASE)
+
+ExampleText = "Washington Foreign Press Center Briefing on U.S. Migration Policy Overview - DVIDS"
+
+print("Compare the 'uncorrected' regex search result:")
+print(RegexStr_Usa_Compiled.search(ExampleText))
+print("\n")
+print("With the corrected one:")
+print(RegexStr_Usa_Corrected_Compiled.search(ExampleText))
+```
+
+### Countries dataset with demonyms
+Mledoze's countries dataset^[See here: https://github.com/mledoze/countries] contains a variable with the demonyms associated for each country, given in English and French, and in the masculine and feminine grammatical forms.
+
+#### Importing the JSON data
+```{python}
+import requests
+import json
+
+CtaWDemonym_JsonUrl = "https://raw.githubusercontent.com/mledoze/countries/master/countries.json"
+
+CtaWDemonym_Response = requests.get(CtaWDemonym_JsonUrl)
+
+CtaWDemonym_Json = json.loads(CtaWDemonym_Response.text)
+
+```
+
+#### Convert the JSON to dataframe
+```{python}
+CtaWDemonym_Df_Raw = pd.DataFrame(CtaWDemonym_Json)
+
+# The ISO 3 is given in the column cca3
+print(CtaWDemonym_Df_Raw.columns)
+print(CtaWDemonym_Df_Raw.head())
+
+# Unnest the demonyms column from their JSON form
+DemonymsUnnested_Df = (pd.json_normalize(CtaWDemonym_Df_Raw["demonyms"])
+                        .rename(columns=lambda x: 'Demonym_' + x)
+                       )
+
+CtaWDemonym_Df = pd.concat([CtaWDemonym_Df_Raw, DemonymsUnnested_Df], axis=1)
+
+print(CtaWDemonym_Df.columns)
+``` 
+
+
+### Extract country names and ISOs, attach them to the news dataset
+For the sake of organising the different CTAs to be different extracted, as well as consider the need to extract demonyms and entities like the European Union, the codebase is organised as follows.
+* First, each item / entity category to be extracted, whether it is the ISO of the CTAs, the ISO code for other entities, the ISO corresponding to demonyms, or the preferred term for a CTA, will have its own entity-regex dictionary. If the regexps are from the Countries and Territories dataset, the function which will create regexeps more suitable for partial string matching will be utilised. Other regexps, for example for the demonyms or for entities such as the EU, will be created here, provided no dataset with regexps for them can be found.
+
+* Second, the function `extractEntityWRegex()` will be defined, so as to take as one parameter the text (news text for this case) from which an entity is to be extracted, and, as the other parameter, the entity - regex dictionary. It will return a list of extracted entities based on the regex.
+
+* Third, the function `extractEntityWRegex()` will be used in loops over the news dataframe creating a column of the extracted entities. Different loops will be used and different columns will be created for each of the entity - regex dictionaries.
+
+* Fourth, any other data wrangling can be handled with ease from that point on.
+
+#### Create different entity - regex dictionaries
+
+Creating the CTA ISO - regex dictionary and CTA preferred term - regex dictionary:
+```{python}
+import pandas as pd
+import re
+import json
+
+
+Iso3166_1_Alpha3_CtaRegexps_Dict = {}
+
+PreferredTerm_CtaRegexps_Dict = {}
+
+for index, cta in CtaConventionsDf.iterrows():
+    
+    Iso3166_1_Alpha3 = cta["ISO 3166-1 Alpha 3-Codes"]
+    
+    if Iso3166_1_Alpha3 == "DOM": # Due to the referencing issue in the Google Sheet.
+        RegexStr = "\\bdominican.rep\\b"
+    
+    else:
+        RegexStr = regexWordBoundary_replace_CaretDollar(cta["Regex"])
+        # Add \b word boundaries to prevent bizarre matches like GuardCoast matching
+        # DRC due to the partial string "rdC".
+        RegexStr = r"\b" + RegexStr + r"\b"
+
+
+
+    if Iso3166_1_Alpha3:
+        Iso3166_1_Alpha3_CtaRegexps_Dict.update(
+            {Iso3166_1_Alpha3: re.compile(r""+RegexStr, re.IGNORECASE)}
+            )
+
+        PreferredTerm = cta["Preferred Term"]
+    
+        PreferredTerm_CtaRegexps_Dict.update(
+            {PreferredTerm: re.compile(r""+RegexStr, re.IGNORECASE)}
+            )
+        
+    #if RegexStr
+    #print(cta["Regex"])
+```
+
+Creating the Non-CTA code - regex dictionary and Non-Cta  - regex dictionary:
+
+```{python}
+
+Eu_Regex = r"\b((european[^a-z0-9]*union)|(e\.?u\.?))\b"
+
+
+NonCtaCode_Regex_Str_Dict = {"EU": Eu_Regex}
+
+NonCtaCode_Regex_Dict = {}
+for nonCtaCode, regexStr in NonCtaCode_Regex_Str_Dict.items():
+    NonCtaCode_Regex_Dict = {nonCtaCode: re.compile(regexStr, re.IGNORECASE)}
+
+
+
+NonCtaName_Regex_Str_Dict = {"European Union": Eu_Regex}
+
+NonCtaName_Regex_Dict = {}
+for nonCtaName, regexStr in NonCtaName_Regex_Str_Dict.items():
+    NonCtaName_Regex_Dict = {nonCtaName: re.compile(regexStr, re.IGNORECASE)}
+
+```
+
+Creating the demonym name - regex dictionary and demonym CTA - ISO code regex dictionary:
+(Contemplating a demonym CTA preferred name - regex dictionary)
+```{python}
+import warnings
+
+# Very little elaborate regex will be involved for the moment until more time is available.
+Demonym_Regex_Dict = {}
+CtaIso3166_1_Alpha3_DemonymRegex_Dict = {}
+
+# Create list of CTA ISO 3 codes which repeat in this dataset, for creating an ambiguity flag.
+CtaWDemonym_Df_Adj = CtaWDemonym_Df
+
+CtaWDemonym_Df_Adj["DemonymShared"] = CtaWDemonym_Df_Adj['Demonym_eng.m'].duplicated(keep=False)
+
+for index, cta in CtaWDemonym_Df_Adj.iterrows():
+
+    Iso3166_1_Alpha3 = cta["cca3"]
+    DemonymStr = cta["Demonym_eng.m"]
+
+    if cta["DemonymShared"]:
+        warnings.warn(f"Multiple CTAs share the demonym {DemonymStr}")
+
+    # The if-statement avoids creating blanks
+    if DemonymStr:
+        if Iso3166_1_Alpha3 == "MEX":
+            DemonymRegex = r"(?<!new)[^a-z0-9]+\bmexican\b"
+
+        elif Iso3166_1_Alpha3 == "DOM":
+            DemonymRegex = r"\bdominican\b(?!.?[^a-z0-9]*rep)"
+
+        else: DemonymRegex = r"\b" + DemonymStr.lower() + r"\b"
+
+        Demonym_Regex_Dict.update(
+            {DemonymStr: re.compile(DemonymRegex, re.IGNORECASE)}
+        )
+
+        CtaIso3166_1_Alpha3_DemonymRegex_Dict.update(
+            {Iso3166_1_Alpha3: re.compile(DemonymRegex, re.IGNORECASE)}
+        )
+
+```
+
+Issue to raise: how to deal with multiple CTAs being returned for demonyms?
+Potential answer: leave out of the function, deal with separately.
+
+Also, the demonyms only deal with the singular forms.
+
+
+#### Define function to extract entities from text with the regex dictionaries created.
+```{python}
+def extractEntityWRegex(text, entity_RegexDict):
+    Entities = []
+    for entity, regex in entity_RegexDict.items():
+        if regex.search(text):
+            Entities.append(entity)
+
+    return ";;;".join(Entities) if Entities else "No entity names"
+
+
+# Demonstrative examples:
+print(
+    extractEntityWRegex("Washington Foreign Press Center Briefing on U.S. Migration Policy Overview - DVIDS", PreferredTerm_CtaRegexps_Dict)
+)
+
+
+print(
+    extractEntityWRegex("Washington Foreign Press Center Briefing on U.S. Migration Policy Overview - DVIDS", Iso3166_1_Alpha3_CtaRegexps_Dict)
+    )
+
+print(
+    extractEntityWRegex("Ireland says British Rwanda policy drives migrants over its border.", Demonym_Regex_Dict)
+)
+
+
+print(
+    extractEntityWRegex("Ireland says British Rwanda policy drives migrants over its border.", CtaIso3166_1_Alpha3_DemonymRegex_Dict)
+)
+
+```
+
+
+#### Apply function to news dataframe
+```{python}
+GoogleNews_Mig_Df_Adj = GoogleNews_Mig_Df
+
+GoogleNews_Mig_Df_Adj["AllText"] = GoogleNews_Mig_Df_Adj["title"] + GoogleNews_Mig_Df_Adj["description"]
+
+
+# Detect CTA regex matches to extract CTA preferred terms
+GoogleNews_Mig_Df_Adj["Name_CtaFound"] = GoogleNews_Mig_Df_Adj.apply(lambda row: extractEntityWRegex(row["AllText"], PreferredTerm_CtaRegexps_Dict), axis=1)
+
+# Detect CTA regex matches to extract CTA ISO 3 codes.
+GoogleNews_Mig_Df_Adj["ISO3166_1_Alpha3_CtaFound"] = GoogleNews_Mig_Df_Adj.apply(lambda row: extractEntityWRegex(row["AllText"], Iso3166_1_Alpha3_CtaRegexps_Dict), axis=1)
+
+# Detect non-CTA regex matches to extract non-CTA names.
+GoogleNews_Mig_Df_Adj["Name_NonCtaFound"] = GoogleNews_Mig_Df_Adj.apply(lambda row: extractEntityWRegex(row["AllText"], NonCtaName_Regex_Dict), axis=1)
+
+# Detect non-CTA regex matches to extract non-CTA codes.
+GoogleNews_Mig_Df_Adj["Code_NonCtaFound"] = GoogleNews_Mig_Df_Adj.apply(lambda row: extractEntityWRegex(row["AllText"], NonCtaCode_Regex_Dict), axis=1)
+
+# Detect demonyms regex matches to extract demonyms
+GoogleNews_Mig_Df_Adj["DemonymsFound"] = GoogleNews_Mig_Df_Adj.apply(lambda row: extractEntityWRegex(row["AllText"], Demonym_Regex_Dict), axis=1)
+
+# Detect demonym regex matches to extract CTA ISOs
+GoogleNews_Mig_Df_Adj["ISO3166_1_Alpha3_of_DemonymsFound"] = GoogleNews_Mig_Df_Adj.apply(lambda row: extractEntityWRegex(row["AllText"], CtaIso3166_1_Alpha3_DemonymRegex_Dict), axis=1)
+
+
+
+GoogleNews_Mig_Df_Adj
+```
+
+
+Scrap notes:
+     DemonymTotals_Edit <-
+       DemonymTotals |> #Irregular plurals
+       mutate(DemonymPlural = case_when(Demonym == "Congolese" ~ "Congolese",
+                                        
+                                        Demonym == "Mosotho" ~ "Basotho",
+                                        
+                                        Demonym == "Chinese" ~ "Chinese",
+                                          
+                                        Demonym == "Irish" ~ "Irish",
+                                        
+                                        Demonym == "French" ~ "French",
+                                        
+                                        Demonym == "Motswana" ~ "Batswana",
+                                        
+                                        Demonym == "Sudanese" ~ "Sudanese",
+                                        
+                                        Demonym == "Burkinabé" ~ "Burkinabè",
+                                        
+                                        Demonym == "Myanma" ~ "Myanmar",
+                                        
+                                        TRUE ~ paste0(Demonym, "s")),
+              
+
