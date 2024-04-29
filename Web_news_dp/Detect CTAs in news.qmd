@@ -39,7 +39,6 @@ GoogleNews_Mig_Df
 The Countries and Territories dataset,^[See here: https://data.humdata.org/dataset/countries-and-territories] found on Humanitarian Data Exchange (HDX), as well as containing country standards such as the ISO, also contains a column with regular expressions to detect country names even with variant spellings. This will be used for detecting CTAs that are mentioned in news text.
 
 ```{python}
-import requests 
 CtaConventions_RawDf = pd.read_csv("Countries & Territories Taxonomy MVP - C&T Taxonomy with HXL Tags.csv")
 
 CtaConventionsDf = CtaConventions_RawDf.drop(index=[0], axis=0).copy()
@@ -159,6 +158,8 @@ import pandas as pd
 import re
 import json
 
+# Place word boundaries for:
+CtaList_NeedWordBoundaries = ["COD"]
 
 Iso3166_1_Alpha3_CtaRegexps_Dict = {}
 
@@ -167,24 +168,32 @@ PreferredTerm_CtaRegexps_Dict = {}
 for index, cta in CtaConventionsDf.iterrows():
     
     Iso3166_1_Alpha3 = cta["ISO 3166-1 Alpha 3-Codes"]
+    PreferredTerm = cta["Preferred Term"]
+
     
     if Iso3166_1_Alpha3 == "DOM": # Due to the referencing issue in the Google Sheet.
         RegexStr = "\\bdominican.rep\\b"
-    
+
+
     else:
         RegexStr = regexWordBoundary_replace_CaretDollar(cta["Regex"])
+
+        # For problematic cases:
         # Add \b word boundaries to prevent bizarre matches like GuardCoast matching
         # DRC due to the partial string "rdC".
-        RegexStr = r"\b" + RegexStr + r"\b"
+        if Iso3166_1_Alpha3 in CtaList_NeedWordBoundaries:
+ 
+            RegexStr = r"\b" + RegexStr + r"\b"
 
+        else:
+            RegexStr
 
-
+        
     if Iso3166_1_Alpha3:
         Iso3166_1_Alpha3_CtaRegexps_Dict.update(
             {Iso3166_1_Alpha3: re.compile(r""+RegexStr, re.IGNORECASE)}
             )
 
-        PreferredTerm = cta["Preferred Term"]
     
         PreferredTerm_CtaRegexps_Dict.update(
             {PreferredTerm: re.compile(r""+RegexStr, re.IGNORECASE)}
