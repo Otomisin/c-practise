@@ -15,24 +15,69 @@ os.chdir(r"C:\Users\aasil\OneDrive - International Organization for Migration - 
 ```{python}
 from gnews import GNews
 import pandas as pd
-import re
+import json
+from datetime import datetime, timedelta
+import concurrent.futures
 
-# Create an instance of GNews with parameters
-# google_news = GNews(language='en', country='US', period='7d', start_date=None, end_date=None, max_results=10, exclude_websites=['yahoo.com', 'cnn.com'],proxy=proxy)
-GoogleNews = GNews(language='en', max_results=30)
+# Load country data from the JSON file
+with open('./countries_all.json') as f:
+    country_data = json.load(f)
+countries = [country['name'] for country in country_data]  # Extract country names
 
-# Search for NEWS with "migrant"
-GoogleNews_Mig = GoogleNews.get_news('migrant')
-# print(migration_news[0])
+# Create an instance of GNews with English language and default settings
+google_news = GNews(language='en', max_results=10)
 
-# Display in DataFrame
-GoogleNews_Mig_Df = pd.DataFrame(GoogleNews_Mig)
+# Get today's date and yesterday's date as datetime objects
+today = datetime.now()
+yesterday = datetime.now() - timedelta(days=1)
+
+# Set the date range for the search: from yesterday to today
+google_news.start_date = yesterday
+google_news.end_date = today
+
+# Define your search terms
+terms = "Migration OR Flood OR Conflict OR migrant OR asylum OR displacement OR refugee OR IDP"
+
+def fetch_news(country):
+    query = f"({terms}) AND {country}"
+    news_results = google_news.get_news(query)
+    for news in news_results:
+        news['Country_Search'] = country
+    return news_results
+
+# Use ThreadPoolExecutor to run searches in parallel
+all_news_items = []
+with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+    future_to_news = {executor.submit(fetch_news, country): country for country in countries}
+    for future in concurrent.futures.as_completed(future_to_news):
+        all_news_items.extend(future.result())
+
+# Convert all news items into a DataFrame
+df = pd.DataFrame(all_news_items)
 
 # Extract just the 'title' value from the 'publisher' column
-GoogleNews_Mig_Df['publisher'] = GoogleNews_Mig_Df['publisher'].apply(lambda x: x['title'])
+df['publisher'] = df['publisher'].apply(lambda x: x['title'])
 
-# Display the DataFrame
-GoogleNews_Mig_Df
+# Function to check for specific terms in title or description
+def check_terms(text):
+    keywords = ["migration", "flood", "conflict", "migrant", "asylum", "displacement", "refugee", "idp"]
+    # Convert text to lower case to make the search case-insensitive
+    text_lower = text.lower()
+    return any(keyword in text_lower for keyword in keywords)
+
+# Apply function to create a new column based on title and description
+df['Relevant_Term_Found'] = df.apply(lambda x: check_terms(x['title']) or check_terms(x['description']), axis=1)
+
+# Convert the 'published date' from text to datetime and reformat
+df['published date'] = pd.to_datetime(df['published date'], format='%a, %d %b %Y %H:%M:%S %Z').dt.strftime('%d/%m/%Y')
+
+# filter for thse with relevant term
+filtered_df = df[df['Relevant_Term_Found'] == True]
+
+GoogleNews_Mig_Df_Adj = filtered_df
+
+GoogleNews_Mig_Df_Adj
+
 ```
 
 ### Regex and the countries and territories dataset from HDX
@@ -61,7 +106,7 @@ it does _not_ match the string
 >`Washington Foreign Press Center Briefing on U.S. Migration Policy Overview - DVIDS`
 
 This is not because the regex never matches the variant `U.S.`, as it will successfully match the following string:
->U.S. embassy
+> U.S. embassy
 The difference of course being that it begins the string.
 
 It seems the reason why the regexps do not work well for partial strings is that they are written with caret `^` and `$` flags, which would lead to certain strings not being detected when they otherwise would be if they formed the full string. In order to use the regexps in this dataset, the approach chosen to avoid this problem is to amend the regexps by replacing the caret and dollar flags with the word boundary anchor `\b`, which would indicate that a word boundary is required (which includes the positions represented by `^` and `$` but includes other boundaries such as white spaces and any non-alphanumeric string). This has the effect of recognising only those partial strings which are whole words, as opposed to parts of a word.
@@ -309,8 +354,6 @@ print(
 
 #### Apply function to news dataframe
 ```{python}
-GoogleNews_Mig_Df_Adj = GoogleNews_Mig_Df
-
 GoogleNews_Mig_Df_Adj["AllText"] = GoogleNews_Mig_Df_Adj["title"] + GoogleNews_Mig_Df_Adj["description"]
 
 
@@ -332,15 +375,11 @@ GoogleNews_Mig_Df_Adj["DemonymsFound"] = GoogleNews_Mig_Df_Adj.apply(lambda row:
 # Detect demonym regex matches to extract CTA ISOs
 GoogleNews_Mig_Df_Adj["ISO3166_1_Alpha3_of_DemonymsFound"] = GoogleNews_Mig_Df_Adj.apply(lambda row: extractEntityWRegex(row["AllText"], CtaIso3166_1_Alpha3_DemonymRegex_Dict), axis=1)
 
-
-
-GoogleNews_Mig_Df_Adj
 ```
 
 
 #### Create a single CTA / other entity code column
 ```{python}
-
 GoogleNews_Mig_Df_Clean = GoogleNews_Mig_Df_Adj
 
 for index, newsRow in GoogleNews_Mig_Df_Clean.iterrows():
@@ -360,12 +399,32 @@ for index, newsRow in GoogleNews_Mig_Df_Clean.iterrows():
     
     Unique_CrossCol_EntityCodes_List = list(set(CrossCol_EntityCodes_List))
 
-    Unique_CrossCol_EntityCodes_Str = ";;;".join(Unique_CrossCol_EntityCodes_List)
+    print("test")
+    print(Unique_CrossCol_EntityCodes_List)
+    #Unique_CrossCol_EntityCodes_Str = ";;;".join(Unique_CrossCol_EntityCodes_List)
 
-    GoogleNews_Mig_Df_Clean.loc[index, "EntityCodes_Detected"] = Unique_CrossCol_EntityCodes_Str
+    if Unique_CrossCol_EntityCodes_List:
+        GoogleNews_Mig_Df_Clean.at[index, "EntityCodes_Detected"] = Unique_CrossCol_EntityCodes_List
 
 GoogleNews_Mig_Df_Clean
 ```
+
+#### Expand rows 
+
+```{python}
+GoogleNews_Mig_Df_Clean_Exploded = GoogleNews_Mig_Df_Clean.explode("EntityCodes_Detected")
+
+
+GoogleNews_Mig_Df_Ready = (GoogleNews_Mig_Df_Clean_Exploded
+                            .drop_duplicates()
+                            .dropna(subset=["EntityCodes_Detected"])
+                            )
+
+
+GoogleNews_Mig_Df_Ready.to_excel("ExplodedAndDroppedRows.xlsx")
+```
+
+
 
 Scrap notes:
      DemonymTotals_Edit <-
