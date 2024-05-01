@@ -5,8 +5,6 @@ from bs4 import BeautifulSoup
 import re
 from datetime import datetime, timedelta
 
-st.set_page_config(page_title='DTM Report Dashboard', page_icon='📊', layout="centered")
-
 # Web Crawler Functions
 # Function to scrape data
 @st.cache_data()  # Updated to use the built-in Streamlit caching
@@ -49,7 +47,8 @@ def scrape_data_new():
 
 # Streamlit app setup
 def app():
-        
+    st.set_page_config(page_title='DTM Report Dashboard', page_icon='📊', layout="centered")
+    
     # Load data using the new web crawler
     df = scrape_data_new()
     print(df.columns)  # Debugging line to check column names
