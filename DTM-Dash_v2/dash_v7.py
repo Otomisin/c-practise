@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 # Web Crawler Functions
 # Function to scrape data
-@st.cache_data(allow_output_mutation=True)  # Updated to use the built-in Streamlit caching
+@st.cache_data()  # Updated to use the built-in Streamlit caching
 def scrape_data_new():
     url = 'https://dtm.iom.int/reports?search=&sort_by=field_published_date&sort_order=DESC'
     headers = {
