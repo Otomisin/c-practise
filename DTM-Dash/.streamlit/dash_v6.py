@@ -6,6 +6,7 @@ import re
 from datetime import datetime, timedelta
 
 # Web Crawler Functions
+# Function to scrape data
 @st.cache_data
 def scrape_data_new():
     url = 'https://dtm.iom.int/reports?search=&sort_by=field_published_date&sort_order=DESC'
