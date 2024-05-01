@@ -1,4 +1,4 @@
-@st.cache(allow_output_mutation=True, show_spinner=True)
+@st.cache_data(allow_output_mutation=True, show_spinner=True)
 def scrape_data_new():
     url = 'https://dtm.iom.int/reports?search=&sort_by=field_published_date&sort_order=DESC'
     headers = {
