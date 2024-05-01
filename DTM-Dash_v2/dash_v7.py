@@ -5,6 +5,9 @@ from bs4 import BeautifulSoup
 import re
 from datetime import datetime, timedelta
 
+# Define the page config as the very first Streamlit call in the script
+st.set_page_config(page_title='DTM Report Dashboard', page_icon='📊', layout='centered')
+
 # Web Crawler Functions
 # Function to scrape data
 @st.cache_data()  # Updated to use the built-in Streamlit caching
