@@ -1,12 +1,10 @@
 import streamlit as st
-import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+import pandas as pd
 import re
-from datetime import datetime, timedelta
 
-# Web Crawler Functions
-@st.cache_data
+@st.cache(allow_output_mutation=True, show_spinner=True)
 def scrape_data_new():
     url = 'https://dtm.iom.int/reports?search=&sort_by=field_published_date&sort_order=DESC'
     headers = {
@@ -14,34 +12,16 @@ def scrape_data_new():
     }
     try:
         response = requests.get(url, headers=headers)
-        response.encoding = 'utf-8'
-        dtm_soup = BeautifulSoup(response.content, 'html.parser')
-        dtm_reports = dtm_soup.find_all('div', class_='report-item1')
-        reports_data = []
-
-        for report in dtm_reports:
-            title = report.find('a', class_='title').text.strip()
-            report_html = str(report)
-            links = re.findall(r'href="(/reports/[^"]+)"', report_html)
-            report_link = f'https://dtm.iom.int{links[0]}' if links else None
-            date_info = report.find('div', class_='date').text.split('·')
-            date = pd.to_datetime(date_info[0].strip(), errors='coerce', format='%b %d %Y')
-            region = date_info[1].strip() if len(date_info) > 1 else 'Unknown'
-            country_name = date_info[2].strip() if len(date_info) > 2 else 'Unknown'
-            report_type = date_info[3].strip() if len(date_info) > 3 else 'Unknown'
-            summary_content = report.find('div', class_='content').text.strip()
-
-            reports_data.append({
-                'Title': title,
-                'Summary': summary_content,
-                'Link': report_link,
-                'Published Date': date,
-                'Country Name': country_name,
-                'Region': region,
-                'Report Type': report_type
-            })
-
-        return pd.DataFrame(reports_data)
+        if response.status_code == 200:
+            dtm_soup = BeautifulSoup(response.content, 'html.parser')
+            dtm_reports = dtm_soup.find_all('div', class_='report-item1')
+            # Continue as before
+        else:
+            st.error(f"HTTP Error: Status code {response.status_code}")
+            return pd.DataFrame()
+    except requests.RequestException as e:
+        st.error(f"Request failed: {e}")
+        return pd.DataFrame()
     except Exception as e:
         st.error(f"Failed to scrape data: {e}")
         return pd.DataFrame()
