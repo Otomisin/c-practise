@@ -5,13 +5,13 @@ from bs4 import BeautifulSoup
 import re
 from datetime import datetime, timedelta
 from dateutil import parser
-
-# Logging setup
 import logging
-logging.basicConfig(level=logging.INFO)
+
+# Setup logging
+logging.basicConfig(level=logging.DEBUG)
 
 # Function to scrape data
-@st.cache
+@st.cache(allow_output_mutation=True)
 def scrape_data_new():
     url = 'https://dtm.iom.int/reports?search=&sort_by=field_published_date&sort_order=DESC'
     headers = {
@@ -19,9 +19,18 @@ def scrape_data_new():
     }
     response = requests.get(url, headers=headers)
     response.encoding = 'utf-8'
+    if response.status_code != 200:
+        logging.error(f"Failed to retrieve data, status code: {response.status_code}")
+        return pd.DataFrame()  # Return an empty DataFrame if the request failed
+    logging.info("HTTP request successful, processing HTML content.")
+
     dtm_soup = BeautifulSoup(response.content, 'html.parser')
     dtm_reports = dtm_soup.find_all('div', class_='report-item1')
     reports_data = []
+    
+    if not dtm_reports:
+        logging.error("No report items found. Check the page and class selectors.")
+        return pd.DataFrame()
 
     for report in dtm_reports:
         try:
@@ -46,9 +55,9 @@ def scrape_data_new():
                 'Region': region,
                 'Report Type': report_type
             })
+            logging.info(f"Processed report: {title}")
         except Exception as e:
-            logging.error("Error processing a report: %s", e)
-            continue  # Skip report if any error occurs
+            logging.error(f"Error processing a report: {e}")
 
     return pd.DataFrame(reports_data)
 
@@ -56,7 +65,7 @@ def scrape_data_new():
 def app():
     st.set_page_config(page_title='DTM Report Dashboard', page_icon='📊', layout="centered")
     df = scrape_data_new()
-
+    
     # Debug: Display DataFrame columns and first few rows
     st.write("DataFrame Columns:", df.columns)
     st.write("First few rows of the DataFrame:", df.head())
