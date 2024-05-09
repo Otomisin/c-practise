@@ -5,19 +5,16 @@ import pandas as pd
 import re
 from datetime import datetime, timedelta
 
-# Web Crawler Functions
-<<<<<<< HEAD
 @st.cache(allow_output_mutation=True, show_spinner=True)
 =======
 # Function to scrape data
 @st.cache_data()  # Updated to use the built-in Streamlit caching
->>>>>>> c1024cda855a4da7005b6593968c3416284fbd4c
 def scrape_data_new():
     url = 'https://dtm.iom.int/reports?search=&sort_by=field_published_date&sort_order=DESC'
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
     }
-<<<<<<< HEAD
+
     try:
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
@@ -54,7 +51,7 @@ def scrape_data_new():
         return pd.DataFrame(), f"Request failed: {e}"
     except Exception as e:
         return pd.DataFrame(), f"Failed to scrape data: {e}"
-=======
+
     response = requests.get(url, headers=headers)
     response.encoding = 'utf-8'
     dtm_soup = BeautifulSoup(response.content, 'html.parser')
@@ -86,13 +83,12 @@ def scrape_data_new():
         })
 
     return pd.DataFrame(reports_data)
->>>>>>> c1024cda855a4da7005b6593968c3416284fbd4c
 
 # Streamlit app setup
 def app():
     st.set_page_config(page_title='DTM Report Dashboard', page_icon='📊', layout="centered")
     
-<<<<<<< HEAD
+
     df, error_message = scrape_data_new()
     if error_message:
         st.error(error_message)
@@ -100,7 +96,7 @@ def app():
     if df.empty:
         st.warning("No data available. Please check the scraper or data source.")
         return
-=======
+
     # Load data using the new web crawler
     df = scrape_data_new()
     print(df.columns)  # Debugging line to check column names
@@ -108,7 +104,7 @@ def app():
     if 'Published Date' not in df.columns:
         st.error("Data does not contain the 'Published Date' column.")
         st.stop()
->>>>>>> c1024cda855a4da7005b6593968c3416284fbd4c
+
 
     now = datetime.now()
     two_days_ago = now - timedelta(days=2)
@@ -161,10 +157,10 @@ def app():
 
     # Displaying filtered data
     for index, row in filtered_data.iterrows():
-<<<<<<< HEAD
+
         st.markdown(f"### {row['Title']}")
         formatted_date = row['Published Date'].strftime('%d-%b-%Y') if pd.notna(row['Published Date']) else "Date Not Available"
-=======
+
         # Formatting the title display
         st.markdown(f"### {row['Title']}")     
         
@@ -175,7 +171,7 @@ def app():
             formatted_date = row['Published Date'].strftime('%d-%b-%Y')
         
         # Display 'Published Date', 'Country', and 'Report Type' in the desired format
->>>>>>> c1024cda855a4da7005b6593968c3416284fbd4c
+
         st.markdown(f"**{formatted_date} | {row['Country Name']} | {row['Report Type']}**")
         
         st.write(row['Summary'])
