@@ -25,6 +25,7 @@ def scrape_data_new():
         links = re.findall(r'href="(/reports/[^"]+)"', report_html)
         report_link = f'https://dtm.iom.int{links[0]}' if links else None
         date_info = report.find('div', class_='date').text.split('·')
+        date = pd.to_datetime(date_info[0].strip(), errors='coerce', format='%b %d %Y')
         region = date_info[1].strip() if len(date_info) > 1 else 'Unknown'
         country_name = date_info[2].strip() if len(date_info) > 2 else 'Unknown'
         report_type = date_info[3].strip() if len(date_info) > 3 else 'Unknown'
@@ -34,6 +35,7 @@ def scrape_data_new():
             'Title': title,
             'Summary': summary_content,
             'Link': report_link,
+            'Published Date': date,
             'Country Name': country_name,
             'Region': region,
             'Report Type': report_type
@@ -45,10 +47,19 @@ def scrape_data_new():
 def app():
     st.set_page_config(page_title='DTM Report Dashboard', page_icon='📊', layout="centered")
     df = scrape_data_new()
+    now = datetime.now()
+    two_days_ago = now - timedelta(days=2)
+    recent_reports = df['Published Date'] >= two_days_ago
+    total_recent_reports = len(recent_reports)
+    total_report_crawled = len(df)
+
+    least_date = df['Published Date'].min().strftime('%Y-%m-%d') if not df['Published Date'].isnull().all() else "No Dates Available"
+    last_date = df['Published Date'].max().strftime('%Y-%m-%d') if not df['Published Date'].isnull().all() else "No Dates Available"
 
     st.image('https://raw.githubusercontent.com/Otomisin/c-practise/main/DTM-Dash/IOMlogo.png', width=70)
     st.title('DTM Report Dashboard')
-    st.caption(f'Reports are continually updated.')
+    st.caption(f'Reports updated as of: {now.strftime("%Y-%m-%d")}')
+    st.write(f" **DATE:** {last_date} - {least_date} | **{total_report_crawled} Reports** Crawled | **{total_recent_reports} Reports** in the last 48hrs")
     st.markdown("---")
 
     with st.sidebar:
@@ -79,8 +90,13 @@ def app():
     filtered_data = df[df['Country Name'].isin(selected_countries)]
 
     for index, row in filtered_data.iterrows():
-        st.markdown(f"### {row['Title']}")
-        st.markdown(f"**{row['Country Name']} | {row['Report Type']}**")
+        st.markdown(f"### {row['Title']}")     
+        if pd.isna(row['Published Date']):
+            formatted_date = "Date Not Available"
+        else:
+            formatted_date = row['Published Date'].strftime('%d-%b-%Y')
+        
+        st.markdown(f"**{formatted_date} | {row['Country Name']} | {row['Report Type']}**")
         st.write(row['Summary'])
         st.markdown(f"[Read More]({row['Link']})", unsafe_allow_html=True)
 
