@@ -52,6 +52,8 @@ def scrape_data_new(pages=10):
 
 
 # Streamlit app setup
+
+# Streamlit app setup
 def app():
     st.set_page_config(page_title='DTM Report Dashboard', page_icon='📊', layout="centered")
     df = scrape_data_new(pages=10)  # Adjust the number of pages as needed
@@ -126,7 +128,6 @@ def app():
 
     # Display counts based on filters
     st.write(f"**Filtered Reports Count:** {len(filtered_data)}")
-    
     st.markdown("---")
 
     for index, row in filtered_data.iterrows():
@@ -138,14 +139,18 @@ def app():
         
         st.markdown(f"**{formatted_date} | {row['Country Name']} | {row['Report Type']}**")
         st.write(row['Summary'])
-        st.markdown(f"[Read More]({row['Link']})", unsafe_allow_html=True)
-
-    st.sidebar.markdown("### Download Data")
+        st.markdown(f"[Read More]({row['Link']})", unsafe_allow_html=True)    
+    
+    # Download Data Button
+    start_str = start_date.strftime("%Y-%m-%d")
+    end_str = end_date.strftime("%Y-%m-%d")
+    csv_filename = f"DTM_Reports_{start_str}-{end_str}.csv"
     csv = filtered_data.to_csv(index=False, encoding='utf-8-sig').encode('utf-8-sig')
+    st.markdown("### Download Data")
     st.sidebar.download_button(
         label="Download filtered data as CSV",
         data=csv,
-        file_name='filtered_data.csv',
+        file_name=csv_filename,
         mime='text/csv',
     )
 
