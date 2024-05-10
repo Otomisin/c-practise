@@ -82,7 +82,7 @@ def app():
     least_recent_date = recent_reports['Published Date'].min().strftime('%Y-%m-%d') if not recent_reports['Published Date'].isnull().all() else "No Dates Available"
     last_recent_date = recent_reports['Published Date'].max().strftime('%Y-%m-%d') if not recent_reports['Published Date'].isnull().all() else "No Dates Available"
     
-    st.write(f"**Reports in the last 48 hours:** {last_recent_date} - {least_recent_date} | **{total_recent_reports} Reports**")
+    st.write(f"**Reports in the last 48 hours:** | **{total_recent_reports} Reports**")
 
     # st.markdown("---")
 
