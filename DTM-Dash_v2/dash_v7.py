@@ -82,7 +82,7 @@ def app():
     least_recent_date = recent_reports['Published Date'].min().strftime('%Y-%m-%d') if not recent_reports['Published Date'].isnull().all() else "No Dates Available"
     last_recent_date = recent_reports['Published Date'].max().strftime('%Y-%m-%d') if not recent_reports['Published Date'].isnull().all() else "No Dates Available"
     
-    st.write(f"**Reports in the last 48 hours:** | **{total_recent_reports} Reports**")
+    st.write(f"**Reports in the last 48 hours:** {last_recent_date} - {least_recent_date} | **{total_recent_reports} Reports**")
 
     # st.markdown("---")
 
@@ -146,7 +146,7 @@ def app():
     end_str = end_date.strftime("%Y-%m-%d")
     csv_filename = f"DTM_Reports_{start_str}-{end_str}.csv"
     csv = filtered_data.to_csv(index=False, encoding='utf-8-sig').encode('utf-8-sig')
-    st.markdown("### Download Data")
+    # st.markdown("### Download Data")
     st.sidebar.download_button(
         label="Download filtered data as CSV",
         data=csv,
