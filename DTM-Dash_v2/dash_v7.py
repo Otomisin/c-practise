@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.DEBUG)
 # Web Crawler Functions
 # Function to scrape data
 # @st.cache_data()  # Updated to use the built-in Streamlit caching
-@st.cache_data(clear_cache=True)
+@st.cache_data()
 def scrape_data_new(pages=10):
     logging.info("Starting data scraping process...")
     
