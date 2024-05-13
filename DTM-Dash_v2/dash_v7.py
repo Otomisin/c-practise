@@ -2,66 +2,48 @@ import streamlit as st
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-import re
-from datetime import datetime, timedelta
 
-# Web Crawler Functions
 # Function to scrape data
-@st.cache_data()  # Updated to use the built-in Streamlit caching
-def scrape_data_new(pages=10):
-    base_url = 'https://dtm.iom.int/reports'
+@st.cache_data()
+def scrape_data(pages=10):
+    url = 'https://apnews.com/hub/migration'
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
     }
-    reports_data = []
+    data = []
 
-    for page in range(pages):
-        if page == 0:
-            url = base_url
-        else:
-            url = f'{base_url}?page={page}'
+    response = requests.get(url, headers=headers)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    page_items = soup.find_all('div', class_='PageList-items-item')
 
-        response = requests.get(url, headers=headers)
-        response.encoding = 'utf-8'
-        dtm_soup = BeautifulSoup(response.content, 'html.parser')
-        dtm_reports = dtm_soup.find_all('div', class_='report-item1')
+    for item in page_items:
+        page_promo = item.find('div', class_='PagePromo')
+        if page_promo:
+            link_tag = page_promo.find('a', class_='Link')
+            link = link_tag['href'] if link_tag else 'No link available'
+            title_tag = page_promo.find('h3', class_='PagePromo-title')
+            title = title_tag.text.strip() if title_tag else 'No title available'
+            description_tag = page_promo.find('div', class_='PagePromo-description')
+            description = description_tag.text.strip() if description_tag else 'No description available'
 
-        for report in dtm_reports:
-            title = report.find('a', class_='title').text.strip()
-            report_html = str(report)
-            links = re.findall(r'href="(/reports/[^"]+)"', report_html)
-            report_link = f'https://dtm.iom.int{links[0]}' if links else None
-            date_info = report.find('div', class_='date').text.split('·')
-            date = pd.to_datetime(date_info[0].strip(), errors='coerce', format='%b %d %Y')
-            region = date_info[1].strip() if len(date_info) > 1 else 'Unknown'
-            country_name = date_info[2].strip() if len(date_info) > 2 else 'Unknown'
-            report_type = date_info[3].strip() if len(date_info) > 3 else 'Unknown'
-            summary_content = report.find('div', class_='content').text.strip()
+            # Correct targeting of the date element using the data-date attribute
+            date_tag = page_promo.find('span', attrs={'data-date': True})
+            date = date_tag.text if date_tag else 'Date not available'
 
-            reports_data.append({
+            data.append({
                 'Title': title,
-                'Summary': summary_content,
-                'Link': report_link,
-                'Published Date': date,
-                'Country Name': country_name,
-                'Region': region,
-                'Report Type': report_type
+                'Date': date
             })
 
-    return pd.DataFrame(reports_data)
-
-# Web Crawler Functions
-# Function to scrape data
-
-# Streamlit app setup
+    return pd.DataFrame(data)
 
 # Streamlit app setup
 def app():
-    st.set_page_config(page_title='DTM Report Dashboard', page_icon='📊', layout="wide")
-    st.title('DTM Report Dashboard')
+    st.set_page_config(page_title='AP News Migration Hub', page_icon='📰', layout="wide")
+    st.title('AP News Migration Hub')
 
     # Get data
-    df = scrape_data_new()
+    df = scrape_data()
 
     # Display head of the DataFrame
     st.write("## Head of the DataFrame")
