@@ -6,21 +6,22 @@ import re
 from datetime import datetime, timedelta
 
 # Web Crawler Functions
-@st.cache_data()  # Using built-in Streamlit caching
-def scrape_data_new(pages=15):
+# Function to scrape data
+@st.cache_data()  # Updated to use the built-in Streamlit caching
+def scrape_data_new(pages=10):
     base_url = 'https://dtm.iom.int/reports'
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
     }
     reports_data = []
-    for page in range(0, pages + 1):
-        params = {
-            'search': '',
-            'sort_by': 'field_published_date',
-            'sort_order': 'DESC',
-            'page': '' if page == 0 else page
-        }
-        response = requests.get(base_url, headers=headers, params=params)
+
+    for page in range(pages):
+        if page == 0:
+            url = base_url
+        else:
+            url = f'{base_url}?page={page}'
+
+        response = requests.get(url, headers=headers)
         response.encoding = 'utf-8'
         dtm_soup = BeautifulSoup(response.content, 'html.parser')
         dtm_reports = dtm_soup.find_all('div', class_='report-item1')
@@ -49,42 +50,20 @@ def scrape_data_new(pages=15):
 
     return pd.DataFrame(reports_data)
 
+
+# Streamlit app setup
+
 # Streamlit app setup
 def app():
-    st.set_page_config(page_title='DTM Report Dashboard', page_icon='📊', layout="centered")
-    df = scrape_data_new()
-    now = datetime.now()
-    st.image('https://raw.githubusercontent.com/Otomisin/c-practise/main/DTM-Dash/IOMlogo.png', width=70)
+    st.set_page_config(page_title='DTM Report Dashboard', page_icon='📊', layout="wide")
     st.title('DTM Report Dashboard')
-    st.caption(f'Reports updated as of: {now.strftime("%Y-%m-%d")}')
 
-    # Date range picker
-    start_date, end_date = st.sidebar.date_input("Select Date Range", [now - timedelta(days=30), now])
-    df = df[(df['Published Date'] >= start_date) & (df['Published Date'] <= end_date)]
+    # Get data
+    df = scrape_data_new()
 
-    country_options = df['Country Name'].unique()
-    selected_countries = st.sidebar.multiselect('Filter by Country:', options=country_options, default=country_options)
-    df = df[df['Country Name'].isin(selected_countries)]
-
-    st.write(f"Filtered by date: {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')} | {len(df)} Reports")
-    st.markdown("---")
-
-    # Display filtered reports
-    for index, row in df.iterrows():
-        st.markdown(f"### {row['Title']}")
-        formatted_date = row['Published Date'].strftime('%d-%b-%Y') if pd.notna(row['Published Date']) else "Date Not Available"
-        st.markdown(f"**{formatted_date} | {row['Country Name']} | {row['Report Type']}**")
-        st.write(row['Summary'])
-        st.markdown(f"[Read More]({row['Link']})", unsafe_allow_html=True)
-
-    # CSV download
-    csv = df.to_csv(index=False, encoding='utf-8-sig').encode('utf-8-sig')
-    st.sidebar.download_button(
-        label="Download filtered data as CSV",
-        data=csv,
-        file_name='filtered_data.csv',
-        mime='text/csv',
-    )
+    # Display head of the DataFrame
+    st.write("## Head of the DataFrame")
+    st.write(df.head())
 
 if __name__ == '__main__':
     app()
