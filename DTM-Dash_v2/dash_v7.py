@@ -1,3 +1,11 @@
+import streamlit as st
+import pandas as pd
+import requests
+from bs4 import BeautifulSoup
+import re
+from datetime import datetime, timedelta
+import logging
+
 # Web Crawler Functions
 # Function to scrape data
 @st.cache_data()  # Updated to use the built-in Streamlit caching
