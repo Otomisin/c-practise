@@ -1,57 +1,20 @@
 import streamlit as st
 import pandas as pd
-import requests
-from bs4 import BeautifulSoup
-import re
-from datetime import datetime, timedelta
 
-# Web Crawler Functions
-# Function to scrape data
-@st.cache_data()  # Updated to use the built-in Streamlit caching
-def scrape_data_new(pages=10):
-    base_url = 'https://dtm.iom.int/reports'
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+# Function to simulate scraping data
+@st.cache
+def scrape_data_new():
+    # Dummy data
+    data = {
+        'Title': ['Report 1', 'Report 2', 'Report 3'],
+        'Published Date': ['2024-05-10', '2024-05-11', '2024-05-12'],
+        'Summary': ['Summary 1', 'Summary 2', 'Summary 3'],
+        'Link': ['Link 1', 'Link 2', 'Link 3'],
+        'Country Name': ['Country 1', 'Country 2', 'Country 3'],
+        'Region': ['Region 1', 'Region 2', 'Region 3'],
+        'Report Type': ['Type 1', 'Type 2', 'Type 3']
     }
-    reports_data = []
-
-    for page in range(pages):
-        if page == 0:
-            url = base_url
-        else:
-            url = f'{base_url}?page={page}'
-
-        response = requests.get(url, headers=headers)
-        response.encoding = 'utf-8'
-        dtm_soup = BeautifulSoup(response.content, 'html.parser')
-        dtm_reports = dtm_soup.find_all('div', class_='report-item1')
-
-        for report in dtm_reports:
-            title = report.find('a', class_='title').text.strip()
-            report_html = str(report)
-            links = re.findall(r'href="(/reports/[^"]+)"', report_html)
-            report_link = f'https://dtm.iom.int{links[0]}' if links else None
-            date_info = report.find('div', class_='date').text.split('·')
-            date = pd.to_datetime(date_info[0].strip(), errors='coerce', format='%b %d %Y')
-            region = date_info[1].strip() if len(date_info) > 1 else 'Unknown'
-            country_name = date_info[2].strip() if len(date_info) > 2 else 'Unknown'
-            report_type = date_info[3].strip() if len(date_info) > 3 else 'Unknown'
-            summary_content = report.find('div', class_='content').text.strip()
-
-            reports_data.append({
-                'Title': title,
-                'Summary': summary_content,
-                'Link': report_link,
-                'Published Date': date,
-                'Country Name': country_name,
-                'Region': region,
-                'Report Type': report_type
-            })
-
-    return pd.DataFrame(reports_data)
-
-
-# Streamlit app setup
+    return pd.DataFrame(data)
 
 # Streamlit app setup
 def app():
