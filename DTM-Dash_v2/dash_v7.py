@@ -1,18 +1,6 @@
-import streamlit as st
-import pandas as pd
-import requests
-from bs4 import BeautifulSoup
-import re
-from datetime import datetime, timedelta
-import logging
-
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
-
 # Web Crawler Functions
 # Function to scrape data
-# @st.cache_data()  # Updated to use the built-in Streamlit caching
-@st.cache_data()
+@st.cache_data()  # Updated to use the built-in Streamlit caching
 def scrape_data_new(pages=10):
     logging.info("Starting data scraping process...")
     
@@ -63,22 +51,6 @@ def scrape_data_new(pages=10):
             })
 
     logging.info("Data scraping process completed.")
-    return pd.DataFrame(reports_data)
-
-
-# Streamlit app setup
-
-# Streamlit app setup
-def app():
-    st.set_page_config(page_title='DTM Report Dashboard', page_icon='📊', layout="wide")
-    st.title('DTM Report Dashboard')
-
-    # Get data
-    df = scrape_data_new()
-
-    # Display head of the DataFrame
-    st.write("## Head of the DataFrame")
-    st.write(df.head())
-
-if __name__ == '__main__':
-    app()
+    df = pd.DataFrame(reports_data)
+    print(df.head())  # Print the first few rows of the DataFrame to verify content
+    return df
