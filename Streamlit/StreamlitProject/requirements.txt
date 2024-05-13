@@ -5,4 +5,3 @@ beautifulsoup4
 bs4
 folium
 geopandas
-json
