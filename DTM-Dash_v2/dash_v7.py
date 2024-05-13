@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 # Web Crawler Functions
 # Function to scrape data
-@st.cache_data()  # Updated to use the built-in Streamlit caching
+@st.cache(allow_output_mutation=True, show_spinner=True)
 def scrape_data_new(pages=10):
     base_url = 'https://dtm.iom.int/reports'
     headers = {
@@ -16,12 +16,13 @@ def scrape_data_new(pages=10):
     reports_data = []
 
     for page in range(pages):
-        if page == 0:
-            url = base_url
-        else:
-            url = f'{base_url}?page={page}'
+        url = f'{base_url}?page={page}' if page > 0 else base_url
 
         response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            st.error(f'Failed to fetch data from {url}. Status code: {response.status_code}')
+            continue  # Skip this page on error
+        
         response.encoding = 'utf-8'
         dtm_soup = BeautifulSoup(response.content, 'html.parser')
         dtm_reports = dtm_soup.find_all('div', class_='report-item1')
@@ -32,7 +33,7 @@ def scrape_data_new(pages=10):
             links = re.findall(r'href="(/reports/[^"]+)"', report_html)
             report_link = f'https://dtm.iom.int{links[0]}' if links else None
             date_info = report.find('div', class_='date').text.split('·')
-            date = pd.to_datetime(date_info[0].strip(), errors='coerce', format='%b %d %Y')
+            date = pd.to_datetime(date_info[0].strip(), errors='coerce', format='%b %d, %Y')
             region = date_info[1].strip() if len(date_info) > 1 else 'Unknown'
             country_name = date_info[2].strip() if len(date_info) > 2 else 'Unknown'
             report_type = date_info[3].strip() if len(date_info) > 3 else 'Unknown'
@@ -50,8 +51,6 @@ def scrape_data_new(pages=10):
 
     return pd.DataFrame(reports_data)
 
-
-# Streamlit app setup
 
 # Streamlit app setup
 def app():
