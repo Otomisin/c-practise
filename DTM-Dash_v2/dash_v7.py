@@ -4,14 +4,11 @@ import requests
 from bs4 import BeautifulSoup
 import re
 from datetime import datetime, timedelta
-import logging
 
 # Web Crawler Functions
 # Function to scrape data
 @st.cache_data()  # Updated to use the built-in Streamlit caching
 def scrape_data_new(pages=10):
-    logging.info("Starting data scraping process...")
-    
     base_url = 'https://dtm.iom.int/reports'
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
@@ -24,15 +21,8 @@ def scrape_data_new(pages=10):
         else:
             url = f'{base_url}?page={page}'
 
-        logging.info(f"Fetching data from URL: {url}")
-        
         response = requests.get(url, headers=headers)
         response.encoding = 'utf-8'
-        
-        if response.status_code != 200:
-            logging.error(f"Failed to fetch data from URL: {url}. Status code: {response.status_code}")
-            continue
-
         dtm_soup = BeautifulSoup(response.content, 'html.parser')
         dtm_reports = dtm_soup.find_all('div', class_='report-item1')
 
@@ -58,7 +48,22 @@ def scrape_data_new(pages=10):
                 'Report Type': report_type
             })
 
-    logging.info("Data scraping process completed.")
-    df = pd.DataFrame(reports_data)
-    print(df.head())  # Print the first few rows of the DataFrame to verify content
-    return df
+    return pd.DataFrame(reports_data)
+
+
+# Streamlit app setup
+
+# Streamlit app setup
+def app():
+    st.set_page_config(page_title='DTM Report Dashboard', page_icon='📊', layout="wide")
+    st.title('DTM Report Dashboard')
+
+    # Get data
+    df = scrape_data_new()
+
+    # Display head of the DataFrame
+    st.write("## Head of the DataFrame")
+    st.write(df.head())
+
+if __name__ == '__main__':
+    app()
