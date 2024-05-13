@@ -183,7 +183,7 @@ def app():
     # Calculate reports published in the last 48 hours
     now = datetime.now()
     two_days_ago = now - timedelta(days=2)
-    recent_reports = df[df['Published Date'] >= two_days_ago]
+    recent_reports = df['Published Date'] >= two_days_ago
     total_recent_reports = len(recent_reports)
     total_report_crawled = len(df)
 
