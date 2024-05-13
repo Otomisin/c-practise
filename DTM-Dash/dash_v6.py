@@ -47,7 +47,7 @@ def scrape_data_new():
 
 # Streamlit app setup
 def app():
-    st.set_page_config(page_title='DTM Report Dashboard', page_icon='📊', layout="centered")
+    # st.set_page_config(page_title='DTM Report Dashboard', page_icon='📊', layout="centered")
     
     # Load data using the new web crawler
     df = scrape_data_new()
